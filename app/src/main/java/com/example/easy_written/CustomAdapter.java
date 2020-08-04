@@ -74,5 +74,5 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         return (null != mList ? mList.size() : 0);
     }
     //bar_flag 외부 제어 함수
-    public void updateCheck(int n){ bar_flag = n; }
+    public void checkBoxVisibility(int n){ bar_flag = n; }
 }

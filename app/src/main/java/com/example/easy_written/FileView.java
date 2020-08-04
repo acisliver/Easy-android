@@ -9,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,7 @@ public class FileView extends AppCompatActivity {
     File[] files;
     //고대은
     private int modify_flag;
+    private int checked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,10 @@ public class FileView extends AppCompatActivity {
 
                     startActivity(intent);
                 }
+                //수정 모드(하단 바 있을 시)
+                else{
+
+                }
             }
 
             @Override
@@ -85,14 +91,21 @@ public class FileView extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
-                    case R.id.tab1:{
+                    //삭제
+                    case R.id.delete_tab:{
                         Toast.makeText(getApplicationContext(),"삭제",Toast.LENGTH_SHORT).show();
                         return true; }
-                    case R.id.tab2:{
+                    //공유
+                    case R.id.share_tab:{
                         Toast.makeText(getApplicationContext(),"공유",Toast.LENGTH_SHORT).show();
                         return true; }
+                    //새폴더
+                    case R.id.folder_tab:{
+                        Toast.makeText(getApplicationContext(),"새폴더",Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
                     //하단 바 내리기
-                    case R.id.tab3:{
+                    case R.id.close_tab:{
                         modify_flag=0;
                         handleBottomNavVisible(bottomNavigationView, modify_flag);
                         handleCheckBoxVisible(0);
@@ -171,8 +184,7 @@ public class FileView extends AppCompatActivity {
 
     //CheckBox 표시 여부 n=0 Gone, n=1 Visible
     public void handleCheckBoxVisible(int n){
-        mAdapter.updateCheck(n);
+        mAdapter.checkBoxVisibility(n);
         mAdapter.notifyDataSetChanged();
     }
-
 }
