@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:textColor="#000000"
+            android:text="회원가입"
+            android:textSize="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="아이디(이메일주소)"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="0.7"
+            android:id="@+id/Temail"
+            >
+        </com.google.android.material.textfield.TextInputEditText>
+
+        <Button
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="중복확인"
+            android:background="@drawable/custom_signup_button"
+            android:layout_weight="0.3"
+            android:layout_gravity="right"/>
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="비밀번호"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/pass1">
+    </com.google.android.material.textfield.TextInputEditText>
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="비밀번호 중복확인"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/pass2">
+    </com.google.android.material.textfield.TextInputEditText>
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="이름(실명 입력)"
+       android:layout_marginBottom="20dp"
+        android:id="@+id/id">
+    </com.google.android.material.textfield.TextInputEditText>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="핸드폰 번호('-'제외)"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/phone"
+            android:layout_weight="0.8">
+        </com.google.android.material.textfield.TextInputEditText>
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="인증번호 전송"
+            android:textColor="#ffffff"
+            android:background="@drawable/custom_signup_button"
+            android:layout_weight="0.2"/>
+    </LinearLayout>
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="인증번호 입력력"
+       android:layout_marginBottom="20dp"
+        android:id="@+id/phone_check">
+    </com.google.android.material.textfield.TextInputEditText>
+
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="생년월일"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0.5">
+        </com.google.android.material.textfield.TextInputEditText>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="남자"
+            android:layout_marginRight="10dp"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="여자"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:textSize="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이용약관 동의(필수)"
+            android:layout_marginRight="10dp"/>
+        <RadioButton
+            android:textSize="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개인정보 취급방침 동의(필수)"/>
+        <RadioButton
+            android:textSize="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="마켓팅 정보 수신 동의(선택)"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <Button
+            android:textColor="#ffffff"
+            android:text="회원 가입"
+            android:textSize="25dp"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@drawable/custom_signup_button"/>
+    </LinearLayout>
+
+
+
+
+
+
+
+
+</LinearLayout>

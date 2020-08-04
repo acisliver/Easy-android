@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:background="@drawable/custom_textviw"
+        android:id="@+id/RecordText"
+        android:textSize="20dp"
+        android:layout_width="300dp"
+        android:layout_height="450dp"
+        android:layout_marginBottom="20dp"
+        android:padding="5dp"/>
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+  />
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/btn_capture"
+                android:textSize="20dp"
+                android:text="촬영"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:background="@drawable/custom_signup_button"
+                android:textColor="#ffffff"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/StartAndStopButton"
+                android:textSize="20dp"
+                android:text="실행/정지"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:background="@drawable/custom_signup_button"
+                android:textColor="#ffffff"/>
+            <Button
+                android:id="@+id/PlayandSaveButton"
+                android:textSize="20dp"
+                android:text="저장/종료"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:background="@drawable/custom_signup_button"
+                android:textColor="#ffffff"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

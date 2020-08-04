@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/Scroll"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="400dp">
+
+            <ImageView
+                android:id="@+id/expanded_image"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="invisible" />
+
+            <GridLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_below="@+id/expanded_image"
+                android:background="#151515"
+                android:columnCount="4"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/thumb_buttun_1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginRight="1dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/eassy" />
+
+                <ImageButton
+                    android:id="@+id/thumb_buttun_2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginRight="1dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/target" />
+
+            </GridLayout>
+
+
+        </RelativeLayout>
+    </ScrollView>
+    <TextView
+        android:id="@+id/text_view"
+        android:textSize="20dp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        />
+
+
+</LinearLayout>
