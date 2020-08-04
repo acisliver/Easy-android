@@ -31,14 +31,5 @@ public class SelectMode extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        Button mode2=findViewById(R.id.mode2);
-        mode2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(SelectMode.this,push_file.class);
-                startActivity(intent);
-            }
-        });
     }
 }

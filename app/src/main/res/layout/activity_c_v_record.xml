@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:screenOrientation="portrait">
 
     <TextView
         android:background="@drawable/custom_textviw"
@@ -36,7 +37,8 @@
                 android:layout_width="150dp"
                 android:layout_height="100dp"
                 android:background="@drawable/custom_signup_button"
-                android:textColor="#ffffff"/>
+                android:textColor="#ffffff"
+                />
 
         </LinearLayout>
 
