@@ -74,7 +74,12 @@ public class FileView extends AppCompatActivity {
                 }
                 //수정 모드(하단 바 있을 시)
                 else{
-
+                    checked = Variable.get(position).getChecked();
+                    if(checked==0)
+                        Variable.get(position).setChecked(1);
+                    else
+                        Variable.get(position).setChecked(0);
+                    mAdapter.notifyDataSetChanged();
                 }
             }
 

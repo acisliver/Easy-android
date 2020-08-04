@@ -1,5 +1,7 @@
 package com.example.easy_written;
 
+import android.widget.CheckBox;
+
 public class File_Data {
     private String name;
     private String date;
@@ -8,7 +10,7 @@ public class File_Data {
     public File_Data(String name,String date){
         this.name=name;
         this.date=date;
-        this.checked=0;
+        this.checked = 0;
     }
 
     public String getName() {

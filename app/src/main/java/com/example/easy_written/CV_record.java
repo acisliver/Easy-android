@@ -390,8 +390,14 @@ public class CV_record extends AppCompatActivity {
                 StartAndStopCheck=0;
             }
             else if(StartAndStopCheck==0){
-                mediaRecorder.pause();
-                StartAndStopCheck=1;
+                try {
+                    mediaRecorder.pause();
+                    StartAndStopCheck=1;
+                }
+                catch (IllegalStateException e){
+                    e.printStackTrace();
+                }
+
             }
             return null;
         }

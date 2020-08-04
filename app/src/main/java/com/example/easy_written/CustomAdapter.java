@@ -67,6 +67,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             viewholder.checkBox.setVisibility(View.GONE);
         else
             viewholder.checkBox.setVisibility(View.VISIBLE);
+
+        //
+        if (mList.get(position).getChecked()==1)
+            viewholder.checkBox.setChecked(true);
+        else
+            viewholder.checkBox.setChecked(false);
     }
 
     @Override
