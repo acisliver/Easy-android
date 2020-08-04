@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -108,7 +109,7 @@ public class FileView extends AppCompatActivity {
             String[] result = name.split("#");
             filesNameList.add(result[0]);
             filesDateList.add(result[1]);
-            Variable.add(new File_Data("날짜:"+filesDateList.get(i),"파일이름 : "+filesNameList.get(i)));
+            Variable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
             mArrayList.add(Variable.get(i));
         }
         mAdapter.notifyDataSetChanged();

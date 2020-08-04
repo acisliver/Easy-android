@@ -35,19 +35,10 @@ public class KeywordTime extends Fragment {
         return keywordtime;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view= inflater.inflate(R.layout.activity_keyword_time,container,false);
-
 
         //데이터 전달받기
         KeywordTimeBundle = getArguments();
