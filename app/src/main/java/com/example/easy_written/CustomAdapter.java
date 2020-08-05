@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
 
     private ArrayList<File_Data> mList;
-    private int bar_flag=0; //하단바 표시여부에 따라 체크박스 표시 flag
+    private int modify_flag=0; //하단바 표시여부에 따라 체크박스 표시 flag
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
         protected TextView name;
@@ -73,12 +73,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             setItemBackground(viewholder, "#ffffff");
         }
 
-        //전체 선택
-
-        //flag에 따라 checkBox 표시
-        if (bar_flag==0) {
+        //하단바 표시 flag에 따라 checkBox 표시
+        if (modify_flag==0) {
             viewholder.checkBox.setVisibility(View.GONE);
-            setItemBackground(viewholder, "#ffffff");    //하단 바 취소 시 다시 흰색으로
+            setItemBackground(viewholder, "#ffffff");
         }
         else {
             viewholder.checkBox.setVisibility(View.VISIBLE);
@@ -89,10 +87,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     public int getItemCount() {
         return (null != mList ? mList.size() : 0);
     }
-    //bar_flag 외부 제어 함수
-    public void checkBoxVisibility(int n){ bar_flag = n; }
+    //modify_flag 외부 제어 함수
+    public void checkBoxVisibility(int modify_flag){ this.modify_flag = modify_flag; }
 
-    //배경색 바꿈
+    //클릭 & 해제 배경색 전환
     public void setItemBackground(@NonNull CustomViewHolder viewholder, String colorString){
         viewholder.checkBox.setBackgroundColor(Color.parseColor(colorString));
         viewholder.name.setBackgroundColor(Color.parseColor(colorString));

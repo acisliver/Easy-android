@@ -17,7 +17,9 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:checked="false"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:clickable="false"
+            android:focusable="false"/>
 
         <TextView
             android:id="@+id/R_name"
