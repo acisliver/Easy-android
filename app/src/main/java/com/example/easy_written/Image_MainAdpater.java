@@ -14,6 +14,11 @@ public class Image_MainAdpater extends AppCompatActivity {
     private FragmentStatePagerAdapter fragmentPagerAdapter;
     private String getfilesNameList,getPaths,getfilesDateList;
     private Bundle imageMainBundle,keyWordTimeBundle;
+    public static String s;
+
+    public String counter(){
+        return s;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +50,9 @@ public class Image_MainAdpater extends AppCompatActivity {
         keyWordTimeBundle.putString("keyFileNamedata",getfilesNameList);
         keyWordTimeBundle.putString("keyFileDatedata",getfilesDateList);
         keyWordTimeBundle.putString("keyPathdata",getPaths);
+        s=keyWordTimeBundle.getString("keyPathdata");
         keywordTimeFragment.setArguments(keyWordTimeBundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.viewpager,keywordTimeFragment).commitNow();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.viewpager,keywordTimeFragment).commitNow();
     }
 
 

@@ -41,10 +41,12 @@ import com.microsoft.cognitiveservices.speech.SpeechConfig;
 import com.microsoft.cognitiveservices.speech.SpeechRecognitionResult;
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -212,7 +214,7 @@ public class CV_record extends AppCompatActivity {
         protected Void doInBackground(String... ReceivedFileName) {
             //저장시킬 파일 만들기
             String ReceivedFileNameToString=ReceivedFileName[0];
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault() );
             Date curDate   = new Date(System.currentTimeMillis());
             String fileDate  = formatter.format(curDate);
             String CreateFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ ReceivedFileNameToString+"#"+fileDate;
@@ -230,6 +232,22 @@ public class CV_record extends AppCompatActivity {
                 String Movepath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+ReceivedFileNameToString+"#"+fileDate+"/"+"#"+StringSplit[1];
                 renameFile(PicturePathList.get(k),Movepath);
             }
+
+            //STT텍스트 저장
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(CreateFilePath+"/"+"STTtext.txt", true);
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
+                writer.write(saved_text);
+                writer.flush();
+                writer.close();
+                fos.close();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
             return null;
         }
         @Override
