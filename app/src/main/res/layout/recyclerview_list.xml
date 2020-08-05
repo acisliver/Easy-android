@@ -15,7 +15,7 @@
         <CheckBox
             android:id="@+id/file_checkbox"
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:checked="false"
             android:visibility="gone"/>
 

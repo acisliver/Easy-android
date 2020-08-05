@@ -1,6 +1,7 @@
 package com.example.easy_written;
 
 
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -62,17 +63,26 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         viewholder.name.setText(mList.get(position).getName());
         viewholder.date.setText(mList.get(position).getDate());
 
-        //flag에 따라 checkBox 표시
-        if (bar_flag==0)
-            viewholder.checkBox.setVisibility(View.GONE);
-        else
-            viewholder.checkBox.setVisibility(View.VISIBLE);
-
-        //
-        if (mList.get(position).getChecked()==1)
+        //항목 클릭 시 체크, 배경색 바꿈
+        if (mList.get(position).getChecked()==1) {
             viewholder.checkBox.setChecked(true);
-        else
+            setItemBackground(viewholder, "#959698");
+        }
+        else {
             viewholder.checkBox.setChecked(false);
+            setItemBackground(viewholder, "#ffffff");
+        }
+
+        //전체 선택
+
+        //flag에 따라 checkBox 표시
+        if (bar_flag==0) {
+            viewholder.checkBox.setVisibility(View.GONE);
+            setItemBackground(viewholder, "#ffffff");    //하단 바 취소 시 다시 흰색으로
+        }
+        else {
+            viewholder.checkBox.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -81,4 +91,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     }
     //bar_flag 외부 제어 함수
     public void checkBoxVisibility(int n){ bar_flag = n; }
+
+    //배경색 바꿈
+    public void setItemBackground(@NonNull CustomViewHolder viewholder, String colorString){
+        viewholder.checkBox.setBackgroundColor(Color.parseColor(colorString));
+        viewholder.name.setBackgroundColor(Color.parseColor(colorString));
+        viewholder.date.setBackgroundColor(Color.parseColor(colorString));
+    }
 }

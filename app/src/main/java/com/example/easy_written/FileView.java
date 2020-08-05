@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,7 +37,6 @@ public class FileView extends AppCompatActivity {
     //고대은
     private int modify_flag;
     private int checked;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +90,8 @@ public class FileView extends AppCompatActivity {
                 handleCheckBoxVisible(1);
             }
         }));
+
+
 
         //고대은
         //bottomnavigationview의 아이콘을 선택 했을때 기능 설정
