@@ -15,9 +15,13 @@ public class Image_MainAdpater extends AppCompatActivity {
     private String getfilesNameList,getPaths,getfilesDateList;
     private Bundle imageMainBundle,keyWordTimeBundle;
     public static String s;
+    public static String d;
 
     public String counter(){
         return s;
+    }
+    public String Imagecounter(){
+        return d;
     }
 
     @Override
@@ -32,19 +36,24 @@ public class Image_MainAdpater extends AppCompatActivity {
         viewPager.setAdapter(fragmentPagerAdapter);
         tableLayout.setupWithViewPager(viewPager);
 
+        //Fileview에서 값 받음
         Intent getIntent=getIntent();
         getfilesNameList=getIntent.getStringExtra("filesNameList");
         getPaths=getIntent.getStringExtra("paths");
         getfilesDateList=getIntent.getStringExtra("filesDateList");
 
+
+        //Image_Tap에 값 전달
         Image_Tap imageTapFragment = new Image_Tap();
         imageMainBundle = new Bundle();
         imageMainBundle.putString("imageFileNamedata",getfilesNameList);
         imageMainBundle.putString("imageFileDatedata",getfilesDateList);
         imageMainBundle.putString("imagePathdata",getPaths);
+        d=imageMainBundle.getString("imagePathdata");
         imageTapFragment.setArguments(imageMainBundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.viewpager,imageTapFragment).commitNow();
 
+        //KeywordTime에 값 전달
         KeywordTime keywordTimeFragment=new KeywordTime();
         keyWordTimeBundle=new Bundle();
         keyWordTimeBundle.putString("keyFileNamedata",getfilesNameList);
@@ -53,6 +62,8 @@ public class Image_MainAdpater extends AppCompatActivity {
         s=keyWordTimeBundle.getString("keyPathdata");
         keywordTimeFragment.setArguments(keyWordTimeBundle);
         //getSupportFragmentManager().beginTransaction().replace(R.id.viewpager,keywordTimeFragment).commitNow();
+
+
     }
 
 

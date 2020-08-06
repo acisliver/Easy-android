@@ -4,10 +4,15 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
@@ -18,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -26,41 +33,93 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+
 public class Image_Tap extends Fragment {
     private View view;
     private Animator currentAnimator;
     private int shortAnimationDuration;
     TextView text_view;
+    private int k;
     private String ImageFileNamedata,ImageFileDatedata,ImagePathdata;
+    private String imageTT;
+    private ArrayList<String> ImagePtahArrayList;
+    private ArrayList<ImageView> imageViews;
+
 
     public static Image_Tap newInstance(){
         Image_Tap image_tap=new Image_Tap();
         return image_tap;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //데이터 받기
-        Bundle bundle = getArguments();
-        if(bundle!=null){
-            ImageFileNamedata = bundle.getString("imageFileNamedata");
-            ImageFileDatedata = bundle.getString("imageFileDatedata");
-            ImagePathdata = bundle.getString("imagePathdata");
-
-            Log.e("ImageFiledata!!~~",ImageFileNamedata);
-            Log.e("ImageFiledata!!~~",ImageFileDatedata);
-            Log.e("ImagePathdata!!~~",ImagePathdata);}
-        else{
-        }
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         view=inflater.inflate(R.layout.activitiy_image_tap,container,false);
+
+        Image_MainAdpater image_mainAdpater=new Image_MainAdpater();
+        imageTT=image_mainAdpater.counter();
+        Log.e("imageTT",imageTT);
+
+        ImagePtahArrayList=new ArrayList<>();
+
+
+        //경로 하위 폴터에서 이미지 파일 찾기
+        findPNGFile(imageTT);
+
+        imageViews=new ArrayList<>();
+
+        //ImageTab 사진 넣기
+        GridLayout gridLayout=view.findViewById(R.id.container);
+        for(k=0;k<ImagePtahArrayList.size();k++){
+            File imgFile = new  File(ImagePtahArrayList.get(k));
+            if(imgFile.exists()){
+                Log.e("ImagePtahArrayList.get(i)",ImagePtahArrayList.get(k));
+                ImageView myImage = new ImageView(getActivity());
+
+                myImage.setImageBitmap(getImageFile(ImagePtahArrayList.get(k)));
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+
+                Log.e("ImagePtahArrayList.get(k)",ImagePtahArrayList.get(k));
+
+
+                //이미지 크기 셋팅
+                myImage.setLayoutParams(Imagesetting(params));
+                //해당 이미지를 gridlayout에 추가
+                gridLayout.addView(myImage);
+                imageViews.add(myImage);
+                imageViews.get(k).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        
+                        zoomImageFromThumb(imageViews.get(k),ImagePtahArrayList.get(k));
+
+                    }
+                });
+            }else{
+                Log.e("npop","nono");
+            }
+        }
+
+
+
+
+
+        //데이터 받기
+//        Bundle bundle = getArguments();
+//        if(bundle!=null){
+//            ImageFileNamedata = bundle.getString("imageFileNamedata");
+//            ImageFileDatedata = bundle.getString("imageFileDatedata");
+//            ImagePathdata = bundle.getString("imagePathdata"); }
+//        else{
+//        }
+
+
+
         text_view=(TextView)view.findViewById(R.id.text_view);
         final ScrollView scroll=(ScrollView)view.findViewById(R.id.Scroll);
         final View thumb1View = (View)view.findViewById(R.id.thumb_buttun_1);
@@ -82,7 +141,7 @@ public class Image_Tap extends Fragment {
                     start=content.indexOf(word,start+1);
                     text_view.setText(spannableString);
                 }
-                zoomImageFromThumb(thumb1View, R.drawable.eassy);
+                //zoomImageFromThumb(thumb1View, R.drawable.eassy);
             }
         });
         final View thumb2View = (View)view.findViewById(R.id.thumb_buttun_2);
@@ -91,7 +150,7 @@ public class Image_Tap extends Fragment {
             public void onClick(View view) {
                 scroll.smoothScrollTo(0,0);
                 text_view.setText("디지몬");
-                zoomImageFromThumb(thumb2View, R.drawable.target);
+                //zoomImageFromThumb(thumb2View, R.drawable.target);
             }
         });
         // Retrieve and cache the system's default "short" animation time.
@@ -101,7 +160,7 @@ public class Image_Tap extends Fragment {
         return view;
     }
 
-    private void zoomImageFromThumb(final View thumbView, int imageResId) {
+    private void zoomImageFromThumb(final View thumbView, String str) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
         if (currentAnimator != null) {
@@ -110,7 +169,7 @@ public class Image_Tap extends Fragment {
         // Load the high-resolution "zoomed-in" image.
         final ImageView expandedImageView = (ImageView) view.findViewById(
                 R.id.expanded_image);
-        expandedImageView.setImageResource(imageResId);
+        expandedImageView.setImageURI(Uri.fromFile(new File(str)));
 
         // Calculate the starting and ending bounds for the zoomed-in image.
         // This step involves lots of math. Yay, math.
@@ -241,5 +300,48 @@ public class Image_Tap extends Fragment {
         });
     }
 
+    //해당 경로에 이미지 파일이 존재 하는지 확인
+    private void findPNGFile(String strDirPath ) {
+        File path = new File(strDirPath);
+        File[] fList = path.listFiles();
+        for (int i = 0; i < fList.length; i++) {
+            if (fList[i].isFile() ) {
+                if(fList[i].getPath().endsWith("png")) {
+                    Log.e("fList[i].getPath()",fList[i].getPath());
+                    ImagePtahArrayList.add(fList[i].getPath());
+                }
+            }
+//            else if (fList[i].isDirectory()) {
+//                //ListFile(fList[i].getPath()); // 재귀함수 호출 }
+//            }
+        }
 
+    }
+
+    //해당 경로의 이미지 파일 가져오기
+    private Bitmap getImageFile(String path) {
+        File file=new File(path);
+        if(file.exists()) {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                return bitmap;
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.e("Do not exist file","!");
+        }
+        return null;
+    }
+
+    //각각의 이미지 크기 조절
+    private GridLayout.LayoutParams Imagesetting(GridLayout.LayoutParams params){
+        params.width = 265;
+        params.height = 265;
+        params.topMargin=1;
+        params.bottomMargin=1;
+        params.leftMargin=1;
+        params.rightMargin=1;
+        return params;
+    }
 }

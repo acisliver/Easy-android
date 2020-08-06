@@ -214,7 +214,7 @@ public class CV_record extends AppCompatActivity {
         protected Void doInBackground(String... ReceivedFileName) {
             //저장시킬 파일 만들기
             String ReceivedFileNameToString=ReceivedFileName[0];
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault() );
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
             Date curDate   = new Date(System.currentTimeMillis());
             String fileDate  = formatter.format(curDate);
             String CreateFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ ReceivedFileNameToString+"#"+fileDate;
@@ -427,18 +427,6 @@ public class CV_record extends AppCompatActivity {
         if( file.exists() ) file.renameTo( fileNew );
     }
 
-    public void searchFileOneByOne(File folder){
-        File[] list = folder.listFiles();
-        if(list==null)
-            return;
-        for(File file : list){
-            // 파일명 또는 폴더명에 EASYWRITTENPICTURE가 들어가는지 & jpg 형식의 파일을 찾을 때
-            if(file.getName().contains("EASYWRITTENPICTURE")){
-                if(file.getName().endsWith(".png")){
-                }
-            }
-        }
-    }
 
     //실행/정지 버튼 클릭 시 STT
     public void onSpeechButtonClicked(){
