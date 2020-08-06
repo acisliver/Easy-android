@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/snack"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,50 +24,49 @@
         android:layout_height="40dp"
   />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <Button
-                android:id="@+id/btn_capture"
-                android:textSize="20dp"
-                android:text="촬영"
-                android:layout_width="150dp"
-                android:layout_height="100dp"
-                android:background="@drawable/custom_signup_button"
-                android:textColor="#ffffff"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <Button
-                android:id="@+id/StartAndStopButton"
-                android:textSize="20dp"
-                android:text="실행/정지"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:background="@drawable/custom_signup_button"
-                android:textColor="#ffffff"/>
-            <Button
-                android:id="@+id/PlayandSaveButton"
-                android:textSize="20dp"
-                android:text="저장/종료"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:background="@drawable/custom_signup_button"
-                android:textColor="#ffffff"/>
-        </LinearLayout>
 
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/btn_capture"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="32dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_baseline_photo_camera_24"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageView
+            android:id="@+id/PlayandSaveButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/ic_baseline_stop_24"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/StartAndStopButton"
+            android:layout_width="80dp"
+            android:layout_height="77dp"
+            android:src="@drawable/microphone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/PlayandSaveButton"
+            app:layout_constraintStart_toEndOf="@+id/btn_capture"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

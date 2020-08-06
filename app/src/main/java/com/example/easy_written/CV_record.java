@@ -25,6 +25,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,13 +65,13 @@ public class CV_record extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
     private Uri photoUri;
-    private Button btn_capture;
+    private ImageView btn_capture;
     private MediaScanner mMediaScanner; // 사진 저장 시 갤러리 폴더에 바로 반영사항을 업데이트 시켜주려면 이 것이 필요하다(미디어 스캐닝)
-    private Button PlayandSaveButton;
+    private ImageView PlayandSaveButton;
     private ArrayList<String> PicturePathList;
 
     //오디오
-    Button StartAndStopButton;
+    ImageView StartAndStopButton;
     String AudiopathSave="";
     MediaRecorder mediaRecorder;
     final int REQUEST_AUDIO_PEMISSION_CODE=1000;
@@ -190,7 +192,12 @@ public class CV_record extends AppCompatActivity {
         if (continuousListeningStarted) {
             if (reco != null) {
                 final Future<Void> task = reco.stopContinuousRecognitionAsync();
-                StartAndStopButton.setText("START");
+                //재생 버튼으로 바꿈
+                StartAndStopButton.setImageDrawable(getResources().
+                        getDrawable(R.drawable.ic_baseline_play_circle_filled_24, getApplicationContext().getTheme()));
+//                //카메라, 저장 버튼 생성
+//                btn_capture.setVisibility(View.VISIBLE);
+//                PlayandSaveButton.setVisibility(View.VISIBLE);
             } else {
                 continuousListeningStarted = false;
             }
@@ -244,8 +251,13 @@ public class CV_record extends AppCompatActivity {
             assert(task != null);
             continuousListeningStarted = true;
             CV_record.this.runOnUiThread(() -> {
-                StartAndStopButton.setText("Stop");
+                //일시정지 버튼으로 바꿈
+                StartAndStopButton.setImageDrawable(getResources().
+                        getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getApplicationContext().getTheme()));
                 StartAndStopButton.setEnabled(true);
+                //카메라, 저장 버튼 생성
+                btn_capture.setVisibility(View.VISIBLE);
+                PlayandSaveButton.setVisibility(View.VISIBLE);
             });
 
             Log.i("stop","stop");
