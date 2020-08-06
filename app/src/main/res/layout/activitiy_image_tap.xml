@@ -32,8 +32,6 @@
                 android:orientation="horizontal">
 
             </GridLayout>
-
-
         </RelativeLayout>
     </ScrollView>
     <TextView
@@ -43,6 +41,4 @@
         android:layout_width="match_parent"
         android:scrollbars="vertical"
         />
-
-
 </LinearLayout>
