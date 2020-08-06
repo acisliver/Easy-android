@@ -55,6 +55,7 @@ import java.util.concurrent.Future;
 
 
 import static android.os.Environment.DIRECTORY_PICTURES;
+import static com.example.easy_written.MediaScanner.*;
 
 
 public class CV_record extends AppCompatActivity {
@@ -96,10 +97,6 @@ public class CV_record extends AppCompatActivity {
         int requestCode = 5;//STT permission request code
 
         PicturePathList=new ArrayList<>();
-
-        //textbox
-//        TextView RecordText=findViewById(R.id.RecordText);
-//        RecordText.setText("만나서 반갑습니다. ***교수입니다. 오늘의 주제는 안드로이드 입니다. 안드로이드는 구글에서 만든 스마트폰용 운영체제입니다. 운영체제와 미들웨어, 사용자 인터페이스, 어플리케이션, MMS 서비스 등을 하나로 묶어 서비스를 제공하며 다양한 어플리케이션을 만들어 설치하면 실행될 수 있도록 구성된 어플리케이션 플랫폼이라고도 볼 수 있습니다. 많은 사람들이 iOS(애플 운영체제)에 견주어 스마트폰과 태블릿으로 안드로이드 운영체제를 사용하면서, 안드로이드는 세계 모바일 시장에서 가장 성공한 OS라는 평가를 받고있습니다. 안드로이드는 리눅스(Linux)를 기반으로 제작되었고 언어는 자바를 사용합니다.  ");
 
         //배속 설정
         arrayList = new ArrayList<>();
@@ -186,6 +183,77 @@ public class CV_record extends AppCompatActivity {
                 }
             }
         });
+    }
+    public void onSpeechButtonClicked(){
+        TextView txt = (TextView)findViewById(R.id.RecordText);
+
+        if (continuousListeningStarted) {
+            if (reco != null) {
+                final Future<Void> task = reco.stopContinuousRecognitionAsync();
+                StartAndStopButton.setText("START");
+            } else {
+                continuousListeningStarted = false;
+            }
+            continuousListeningStarted = false;
+
+            return;
+        }
+
+        try {
+            SpeechConfig config = SpeechConfig.fromSubscription(SPEECHSUBSCRIPTIONKEY, SERVICEREGION);
+            config.setSpeechRecognitionLanguage("ko-KR");
+            assert (config!=null);
+
+            reco = new SpeechRecognizer(config);
+            assert (reco!=null);
+
+
+            reco.recognizing.addEventListener((s, e) -> {
+                if(e.getResult().getReason()==ResultReason.RecognizingSpeech){
+                    System.out.println("RECOGNIZING: Text=" +saved_text+ e.getResult().getText());
+                    txt.setText("RECOGNIZING: Text=" + saved_text+e.getResult().getText());
+                }
+
+            });
+            reco.recognized.addEventListener((s, e) -> {
+                if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
+                    saved_text=saved_text+ e.getResult().getText();
+                    System.out.println("RECOGNIZED: Text="+saved_text);
+                    txt.setText("RECOGNIZED: Text=" + saved_text);
+                }
+                else if (e.getResult().getReason() == ResultReason.NoMatch) {
+                    System.out.println("NOMATCH: Speech could not be recognized.");
+                }
+            });
+
+            reco.canceled.addEventListener((s, e) -> {
+                System.out.println("CANCELED: Reason=" + e.getReason());
+
+                if (e.getReason() == CancellationReason.Error) {
+                    System.out.println("CANCELED: ErrorCode=" + e.getErrorCode());
+                    System.out.println("CANCELED: ErrorDetails=" + e.getErrorDetails());
+                    System.out.println("CANCELED: Did you update the subscription info?");
+                }
+
+            });
+
+            reco.sessionStopped.addEventListener((s, e) -> {
+                System.out.println("\n    Session stopped event.");
+            });
+            final Future<Void> task = reco.startContinuousRecognitionAsync();
+            assert(task != null);
+            continuousListeningStarted = true;
+            CV_record.this.runOnUiThread(() -> {
+                StartAndStopButton.setText("Stop");
+                StartAndStopButton.setEnabled(true);
+            });
+
+            Log.i("stop","stop");
+            reco.close();
+        } catch (Exception ex) {
+            Log.e("SpeechSDKDemo", "unexpected " + ex.getMessage());
+            assert(false);
+        }
     }
 
 
@@ -431,75 +499,5 @@ public class CV_record extends AppCompatActivity {
 
 
     //실행/정지 버튼 클릭 시 STT
-    public void onSpeechButtonClicked(){
-        TextView txt = (TextView)findViewById(R.id.RecordText);
 
-        if (continuousListeningStarted) {
-            if (reco != null) {
-                final Future<Void> task = reco.stopContinuousRecognitionAsync();
-                StartAndStopButton.setText("START");
-            } else {
-                continuousListeningStarted = false;
-            }
-            continuousListeningStarted = false;
-
-            return;
-        }
-
-        try {
-            SpeechConfig config = SpeechConfig.fromSubscription(SPEECHSUBSCRIPTIONKEY, SERVICEREGION);
-            config.setSpeechRecognitionLanguage("ko-KR");
-            assert (config!=null);
-
-            reco = new SpeechRecognizer(config);
-            assert (reco!=null);
-
-
-            reco.recognizing.addEventListener((s, e) -> {
-                if(e.getResult().getReason()==ResultReason.RecognizedSpeech){
-                    System.out.println("RECOGNIZING: Text=" +saved_text+ e.getResult().getText());
-                    txt.setText("RECOGNIZING: Text=" + saved_text+e.getResult().getText());
-                }
-
-            });
-            reco.recognized.addEventListener((s, e) -> {
-                if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
-                    saved_text=saved_text+ e.getResult().getText();
-                    System.out.println("RECOGNIZED: Text="+saved_text);
-                    txt.setText("RECOGNIZED: Text=" + saved_text);
-                }
-                else if (e.getResult().getReason() == ResultReason.NoMatch) {
-                    System.out.println("NOMATCH: Speech could not be recognized.");
-                }
-            });
-
-            reco.canceled.addEventListener((s, e) -> {
-                System.out.println("CANCELED: Reason=" + e.getReason());
-
-                if (e.getReason() == CancellationReason.Error) {
-                    System.out.println("CANCELED: ErrorCode=" + e.getErrorCode());
-                    System.out.println("CANCELED: ErrorDetails=" + e.getErrorDetails());
-                    System.out.println("CANCELED: Did you update the subscription info?");
-                }
-
-            });
-
-            reco.sessionStopped.addEventListener((s, e) -> {
-                System.out.println("\n    Session stopped event.");
-            });
-            final Future<Void> task = reco.startContinuousRecognitionAsync();
-            assert(task != null);
-            continuousListeningStarted = true;
-            CV_record.this.runOnUiThread(() -> {
-                StartAndStopButton.setText("Stop");
-                StartAndStopButton.setEnabled(true);
-            });
-
-            Log.i("stop","stop");
-            reco.close();
-        } catch (Exception ex) {
-            Log.e("SpeechSDKDemo", "unexpected " + ex.getMessage());
-            assert(false);
-        }
-    }
 }
