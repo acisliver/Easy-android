@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,12 +47,14 @@ public class FileView extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         //고대은
-        final BottomNavigationView bottomNavigationView=findViewById(R.id.bottomNavigationView);
-        modify_flag=0;
+        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        modify_flag = 0;
+
+        final CheckBox check_all = findViewById(R.id.check_all);
 
         mArrayList = new ArrayList<>();
 
-        mAdapter = new CustomAdapter( mArrayList);
+        mAdapter = new CustomAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -60,22 +63,23 @@ public class FileView extends AppCompatActivity {
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new ClickListener() {
+            //파일 클릭 시
             @Override
             public void onClick(View view, int position) {//recycler list 하나씩 위치에 따라 다른 화면 띄우기, 지금은 파일 하나만 했음
-                if(modify_flag==0){
+                if (modify_flag == 0) {
                     Intent intent = new Intent(getBaseContext(), Image_MainAdpater.class);
 
                     //파일값 넘기기
-                    intent.putExtra("filesNameList",filesNameList.get(position));
-                    intent.putExtra("filesDateList",filesDateList.get(position));
-                    intent.putExtra("paths",files[position].getPath());
+                    intent.putExtra("filesNameList", filesNameList.get(position));
+                    intent.putExtra("filesDateList", filesDateList.get(position));
+                    intent.putExtra("paths", files[position].getPath());
 
                     startActivity(intent);
                 }
                 //수정 모드(하단 바 있을 시)
-                else{
+                else {
                     checked = Variable.get(position).getChecked();
-                    if(checked==0)
+                    if (checked == 0)
                         Variable.get(position).setChecked(1);
                     else
                         Variable.get(position).setChecked(0);
@@ -85,45 +89,68 @@ public class FileView extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-                modify_flag=1;
-                handleBottomNavVisible(bottomNavigationView, modify_flag);
-                handleCheckBoxVisible(1);
+                modify_flag = 1;
+                handleVisible(modify_flag);
+                mAdapter.notifyDataSetChanged();
             }
         }));
+
 
         //고대은
         //bottomnavigationview의 아이콘을 선택 했을때 기능 설정
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
                     //삭제
-                    case R.id.delete_tab:{
-                        Toast.makeText(getApplicationContext(),"삭제",Toast.LENGTH_SHORT).show();
-                        return true; }
+                    case R.id.delete_tab: {
+                        Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
                     //공유
-                    case R.id.share_tab:{
-                        Toast.makeText(getApplicationContext(),"공유",Toast.LENGTH_SHORT).show();
-                        return true; }
+                    case R.id.share_tab: {
+                        Toast.makeText(getApplicationContext(), "공유", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
                     //새폴더
-                    case R.id.folder_tab:{
-                        Toast.makeText(getApplicationContext(),"새폴더",Toast.LENGTH_SHORT).show();
+                    case R.id.folder_tab: {
+                        Toast.makeText(getApplicationContext(), "새폴더", Toast.LENGTH_SHORT).show();
                         return true;
                     }
                     //하단 바 내리기
-                    case R.id.close_tab:{
-                        modify_flag=0;
-                        handleBottomNavVisible(bottomNavigationView, modify_flag);
-                        handleCheckBoxVisible(0);
-                        return true; }
-                    default: return false; }
-            } });
+                    case R.id.close_tab: {
+                        modify_flag = 0;
+                        handleVisible(modify_flag);
+                        mAdapter.notifyDataSetChanged();
+                        return true;
+                    }
+                    default:
+                        return false;
+                }
+            }
+        });
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+"/";
+        //전체선택
+        check_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int checked;
+                int count = mAdapter.getItemCount();
+                if (check_all.isChecked()==true) checked=1;
+                else checked=0;
+                for (int pos=0;pos<count;pos++){
+                    Variable.get(pos).setChecked(checked);
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/";
         File directory = new File(path);
         files = directory.listFiles();
 
-        for (int i=0; i< files.length; i++) {
-            String name=files[i].getName();
+        for (int i = 0; i < files.length; i++) {
+            String name = files[i].getName();
             String[] result = name.split("#");
             filesNameList.add(result[0]);
             filesDateList.add(result[1]);
@@ -182,14 +209,28 @@ public class FileView extends AppCompatActivity {
 
     //고대은
     //하단 바 표시 여부 modify_flag=0 Gone, modify_flag=1 Visible
-    public void handleBottomNavVisible(BottomNavigationView bottomNavigationView, int modify_flag){
-        if (modify_flag==1) bottomNavigationView.setVisibility(View.VISIBLE);
+    public void handleBottomNavVisible(int modify_flag) {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        if (modify_flag == 1) bottomNavigationView.setVisibility(View.VISIBLE);
         else bottomNavigationView.setVisibility(View.GONE);
     }
 
-    //CheckBox 표시 여부 n=0 Gone, n=1 Visible
-    public void handleCheckBoxVisible(int n){
+    //하단 바 표시 여부 어댑터에 전달
+    public void handleCheckBoxVisible(int n) {
         mAdapter.checkBoxVisibility(n);
-        mAdapter.notifyDataSetChanged();
+    }
+
+    //전체선택 표시 여부
+    public void handleCheckedAllVisible(int modify_flag) {
+        CheckBox check_all = findViewById(R.id.check_all);
+        if(modify_flag==0) check_all.setVisibility(View.GONE);
+        else check_all.setVisibility(View.VISIBLE);
+    }
+
+    //표시 여부 함수 모음
+    public void handleVisible(int modify_flag) {
+        handleCheckBoxVisible(modify_flag);
+        handleCheckedAllVisible(modify_flag);
+        handleBottomNavVisible(modify_flag);
     }
 }
