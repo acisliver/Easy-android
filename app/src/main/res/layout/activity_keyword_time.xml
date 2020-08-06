@@ -15,6 +15,7 @@
         android:textStyle="bold"
         android:textSize="50dp"/>
     <TextView
+        android:bufferType="spannable"
         android:background="@drawable/custom_textviw"
         android:id="@+id/setSTTTExtView"
         android:textSize="20dp"

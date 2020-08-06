@@ -75,7 +75,10 @@ public class Image_Tap extends Fragment {
         Log.e("imageTT",imageTT);
         imageTT2=imageTT+"/"+"STTtext.txt";
         Log.e("imageTT2",imageTT2);
-        text_view.setText(ReadTextFile(imageTT2));
+
+        //setText
+        Highlighting highlighting=new Highlighting();
+        text_view.setText(highlighting.highlight(ReadTextFile(imageTT2)));
 
         ImagePtahArrayList=new ArrayList<>();
 
@@ -343,19 +346,7 @@ public class Image_Tap extends Fragment {
                 zoomImageFromThumb(imageViewArrayList.get(k),ImagePtahArrayList.get(k));
                 scroll.smoothScrollTo(0,0);
 
-//                text_view.setText("안녕하세요. 만나서 반가워요. 저는 ***교수입니다. \n" +
-//                        "안드로이드에 대해 얼마나 알고계신가요? 안드로이드는 구글에서 만든 스마트폰용 운영체제 입니다.미들웨어, 사용자 인터페이스, 어플리케이션, MMS 서비스 등을 하나로 묶어 서비스를 제공하며 다양한 어플리케이션을 만들어 설치하면 실행될 수 있도록 구성된 종합적인 개발 플랫폼 입니다.안드로이드를 애용합시다.\"");
-//                String content = text_view.getText().toString();
-//                SpannableString spannableString = new SpannableString(content);
-//                String word = "안드로이드";
-//                int start=content.indexOf(word);
-//                while(start!=-1) {
-//                    int end = start + word.length();
-//                    spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    spannableString.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    start = content.indexOf(word, start + 1);
-//                    text_view.setText(spannableString);
-//                }
+
             }
         };
     }

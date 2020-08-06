@@ -76,9 +76,9 @@ public class KeywordTime extends Fragment {
         SpannableString content1 = new SpannableString("안드로이드");
         content1.setSpan(new UnderlineSpan(), 0, content1.length(), 0);
 
-        String STTtextToString=ReadTextFile(STT2);
         TextView textView=view.findViewById(R.id.setSTTTExtView);
-        textView.setText(STTtextToString);
+        Highlighting highlighting=new Highlighting();
+        textView.setText(highlighting.highlight(ReadTextFile(STT2)));
 
         ImageButton AudioRunButton=view.findViewById(R.id.AudioRunButton);
         AudioRunButton.setOnClickListener(new View.OnClickListener() {
