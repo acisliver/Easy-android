@@ -189,7 +189,7 @@ public class CV_record extends AppCompatActivity {
     }
 
 
-    //스피닝 쓰레드
+    //스피닝 쓰레드,저장
     private class CheckTypesTask extends AsyncTask<String,Void,Void> {
 
         ProgressDialog asyncDialog=new ProgressDialog(CV_record.this);
@@ -212,6 +212,8 @@ public class CV_record extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... ReceivedFileName) {
+
+            setupMediaRecorder();
             //저장시킬 파일 만들기
             String ReceivedFileNameToString=ReceivedFileName[0];
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
@@ -378,8 +380,6 @@ public class CV_record extends AppCompatActivity {
         }
     }
 
-
-
     private boolean checkPermissionFromDevice(){
         int write_external_storage_resuly= ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int record_audio_result=ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
@@ -421,12 +421,12 @@ public class CV_record extends AppCompatActivity {
         }
     }
 
+    //파일 경로 변경
     public void renameFile(String filename, String newFilename) {
         File file = new File( filename );
         File fileNew = new File( newFilename );
         if( file.exists() ) file.renameTo( fileNew );
     }
-
 
     //실행/정지 버튼 클릭 시 STT
     public void onSpeechButtonClicked(){

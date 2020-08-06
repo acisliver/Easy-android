@@ -31,22 +31,6 @@
                 android:columnCount="4"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/thumb_buttun_1"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginRight="1dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/eassy" />
-
-                <ImageButton
-                    android:id="@+id/thumb_buttun_2"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginRight="1dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/target" />
-
             </GridLayout>
 
 

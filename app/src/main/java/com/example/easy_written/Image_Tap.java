@@ -33,8 +33,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -47,8 +51,9 @@ public class Image_Tap extends Fragment {
     private String ImageFileNamedata,ImageFileDatedata,ImagePathdata;
     private String imageTT;
     private ArrayList<String> ImagePtahArrayList;
-    private ArrayList<ImageView> imageViews;
-
+    private ArrayList<ImageView> imageViewArrayList;
+    private ScrollView scroll;
+    private String imageTT2;
 
     public static Image_Tap newInstance(){
         Image_Tap image_tap=new Image_Tap();
@@ -60,10 +65,17 @@ public class Image_Tap extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.activitiy_image_tap,container,false);
+        scroll=(ScrollView)view.findViewById(R.id.Scroll);
+
+
+        text_view=(TextView)view.findViewById(R.id.text_view);
 
         Image_MainAdpater image_mainAdpater=new Image_MainAdpater();
         imageTT=image_mainAdpater.counter();
         Log.e("imageTT",imageTT);
+        imageTT2=imageTT+"/"+"STTtext.txt";
+        Log.e("imageTT2",imageTT2);
+        text_view.setText(ReadTextFile(imageTT2));
 
         ImagePtahArrayList=new ArrayList<>();
 
@@ -71,7 +83,7 @@ public class Image_Tap extends Fragment {
         //경로 하위 폴터에서 이미지 파일 찾기
         findPNGFile(imageTT);
 
-        imageViews=new ArrayList<>();
+        imageViewArrayList=new ArrayList<>();
 
         //ImageTab 사진 넣기
         GridLayout gridLayout=view.findViewById(R.id.container);
@@ -79,35 +91,29 @@ public class Image_Tap extends Fragment {
             File imgFile = new  File(ImagePtahArrayList.get(k));
             if(imgFile.exists()){
                 Log.e("ImagePtahArrayList.get(i)",ImagePtahArrayList.get(k));
+
                 ImageView myImage = new ImageView(getActivity());
+                myImage.setClickable(true);
 
                 myImage.setImageBitmap(getImageFile(ImagePtahArrayList.get(k)));
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-
                 Log.e("ImagePtahArrayList.get(k)",ImagePtahArrayList.get(k));
-
 
                 //이미지 크기 셋팅
                 myImage.setLayoutParams(Imagesetting(params));
+
+                imageViewArrayList.add(myImage);
+
                 //해당 이미지를 gridlayout에 추가
                 gridLayout.addView(myImage);
-                imageViews.add(myImage);
-                imageViews.get(k).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        
-                        zoomImageFromThumb(imageViews.get(k),ImagePtahArrayList.get(k));
 
-                    }
-                });
+                //이미지 클릭시
+                imageViewArrayList.get(k).setOnClickListener(getOnClickDoSomething(k));
+
             }else{
                 Log.e("npop","nono");
             }
         }
-
-
-
-
 
         //데이터 받기
 //        Bundle bundle = getArguments();
@@ -119,40 +125,6 @@ public class Image_Tap extends Fragment {
 //        }
 
 
-
-        text_view=(TextView)view.findViewById(R.id.text_view);
-        final ScrollView scroll=(ScrollView)view.findViewById(R.id.Scroll);
-        final View thumb1View = (View)view.findViewById(R.id.thumb_buttun_1);
-        text_view.setMovementMethod(new ScrollingMovementMethod());
-        thumb1View.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scroll.smoothScrollTo(0,0);
-                text_view.setText("안녕하세요. 만나서 반가워요. 저는 ***교수입니다. \n" +
-                        "안드로이드에 대해 얼마나 알고계신가요? 안드로이드는 구글에서 만든 스마트폰용 운영체제 입니다.미들웨어, 사용자 인터페이스, 어플리케이션, MMS 서비스 등을 하나로 묶어 서비스를 제공하며 다양한 어플리케이션을 만들어 설치하면 실행될 수 있도록 구성된 종합적인 개발 플랫폼 입니다.안드로이드를 애용합시다.\"");
-                String content = text_view.getText().toString();
-                SpannableString spannableString = new SpannableString(content);
-                String word = "안드로이드";
-                int start=content.indexOf(word);
-                while(start!=-1){
-                    int end = start + word.length();
-                    spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    spannableString.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    start=content.indexOf(word,start+1);
-                    text_view.setText(spannableString);
-                }
-                //zoomImageFromThumb(thumb1View, R.drawable.eassy);
-            }
-        });
-        final View thumb2View = (View)view.findViewById(R.id.thumb_buttun_2);
-        thumb2View.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scroll.smoothScrollTo(0,0);
-                text_view.setText("디지몬");
-                //zoomImageFromThumb(thumb2View, R.drawable.target);
-            }
-        });
         // Retrieve and cache the system's default "short" animation time.
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -336,12 +308,55 @@ public class Image_Tap extends Fragment {
 
     //각각의 이미지 크기 조절
     private GridLayout.LayoutParams Imagesetting(GridLayout.LayoutParams params){
-        params.width = 265;
-        params.height = 265;
-        params.topMargin=1;
-        params.bottomMargin=1;
-        params.leftMargin=1;
-        params.rightMargin=1;
+        params.width = 243;
+        params.height = 243;
+        params.topMargin=10;
+        params.bottomMargin=10;
+        params.leftMargin=10;
+        params.rightMargin=10;
         return params;
+    }
+
+    //text파일 읽기 keyword에도 존재.
+    private String ReadTextFile(String path){
+        StringBuffer strBuffer = new StringBuffer();
+        try{
+            InputStream is = new FileInputStream(path);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line="";
+            while((line=reader.readLine())!=null){
+                strBuffer.append(line+"\n");
+            }
+            reader.close();
+            is.close();
+        }catch (IOException e){
+            e.printStackTrace();
+            return "";
+        }
+        return strBuffer.toString();
+    }
+
+    //image클릭시
+    View.OnClickListener getOnClickDoSomething(int k)  {
+        return new View.OnClickListener() {
+            public void onClick(View v) {
+                zoomImageFromThumb(imageViewArrayList.get(k),ImagePtahArrayList.get(k));
+                scroll.smoothScrollTo(0,0);
+
+//                text_view.setText("안녕하세요. 만나서 반가워요. 저는 ***교수입니다. \n" +
+//                        "안드로이드에 대해 얼마나 알고계신가요? 안드로이드는 구글에서 만든 스마트폰용 운영체제 입니다.미들웨어, 사용자 인터페이스, 어플리케이션, MMS 서비스 등을 하나로 묶어 서비스를 제공하며 다양한 어플리케이션을 만들어 설치하면 실행될 수 있도록 구성된 종합적인 개발 플랫폼 입니다.안드로이드를 애용합시다.\"");
+//                String content = text_view.getText().toString();
+//                SpannableString spannableString = new SpannableString(content);
+//                String word = "안드로이드";
+//                int start=content.indexOf(word);
+//                while(start!=-1) {
+//                    int end = start + word.length();
+//                    spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    spannableString.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    start = content.indexOf(word, start + 1);
+//                    text_view.setText(spannableString);
+//                }
+            }
+        };
     }
 }
