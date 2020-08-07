@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -80,11 +80,19 @@ public class KeywordTime extends Fragment {
         Highlighting highlighting=new Highlighting();
         textView.setText(highlighting.highlight(ReadTextFile(STT2)));
 
-        ImageButton AudioRunButton=view.findViewById(R.id.AudioRunButton);
+        ImageView AudioRunButton=view.findViewById(R.id.AudioRunButton);
         AudioRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PlayAndCancel(iwantplayaudio);
+                if(PlayAndCancelCheck==true) {
+                    AudioRunButton.setImageDrawable(getResources().
+                            getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getActivity().getTheme()));
+                }
+                else{
+                    AudioRunButton.setImageDrawable(getResources().
+                            getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getActivity().getTheme()));
+                }
             }
         });
 
