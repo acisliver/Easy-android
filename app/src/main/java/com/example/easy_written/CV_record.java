@@ -131,6 +131,9 @@ public class CV_record extends AppCompatActivity {
         PlayandSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaRecorder.stop();
+                mediaRecorder.release();
+
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(CV_record.this);
                 alert.setMessage("파일이름");
