@@ -54,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        View google_sign_button=findViewById(R.id.google_sign_button);
+        google_sign_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,SelectMode.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 }
