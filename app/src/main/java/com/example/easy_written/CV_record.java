@@ -220,16 +220,14 @@ public class CV_record extends AppCompatActivity {
 
             reco.recognizing.addEventListener((s, e) -> {
                 if(e.getResult().getReason()==ResultReason.RecognizingSpeech){
-                    System.out.println("RECOGNIZING: Text=" +saved_text+ e.getResult().getText());
-                    txt.setText("RECOGNIZING: Text=" + saved_text+e.getResult().getText());
+                    txt.setText("" + saved_text+e.getResult().getText());
                 }
 
             });
             reco.recognized.addEventListener((s, e) -> {
                 if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
                     saved_text=saved_text+ e.getResult().getText();
-                    System.out.println("RECOGNIZED: Text="+saved_text);
-                    txt.setText("RECOGNIZED: Text=" + saved_text);
+                    txt.setText("" + saved_text);
                 }
                 else if (e.getResult().getReason() == ResultReason.NoMatch) {
                     System.out.println("NOMATCH: Speech could not be recognized.");
