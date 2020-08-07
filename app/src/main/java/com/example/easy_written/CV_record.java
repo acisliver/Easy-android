@@ -131,8 +131,13 @@ public class CV_record extends AppCompatActivity {
         PlayandSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaRecorder.stop();
-                mediaRecorder.release();
+                try{
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                }
+                catch (IllegalStateException e){
+                    
+                }
 
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(CV_record.this);
