@@ -448,37 +448,13 @@ public class CV_record extends AppCompatActivity {
         mediaRecorder.setOutputFile(AudiopathSave);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case REQUEST_AUDIO_PEMISSION_CODE:
-            {
-                if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED)
-                    Toast.makeText(this,"permission granted",Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(this,"permission denied",Toast.LENGTH_SHORT).show();
-            }
-            break;
-        }
-    }
 
-
-
-    private boolean checkPermissionFromDevice(){
-        int write_external_storage_resuly= ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int record_audio_result=ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
-        return write_external_storage_resuly== PackageManager.PERMISSION_GRANTED && record_audio_result==PackageManager.PERMISSION_GRANTED;
-
-    }
 
     public class PlayAndStop extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             if (StartAndStopCheck == 1) {
-                if (checkPermissionFromDevice()) {
                     AudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ "_audio_record"+".3gp";
-
                     setupMediaRecorder();
                     try {
                         mediaRecorder.prepare();
@@ -489,7 +465,6 @@ public class CV_record extends AppCompatActivity {
                     catch (IllegalStateException e){
                         e.printStackTrace();
                     }
-                }
                 StartAndStopCheck=0;
             }
             else if(StartAndStopCheck==0){

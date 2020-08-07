@@ -2,13 +2,16 @@ package com.example.easy_written;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -73,6 +76,27 @@ public class Splash extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
         },REQUEST_AUDIO_PEMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_AUDIO_PEMISSION_CODE:
+            {
+                if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED)
+                    Toast.makeText(this,"permission granted",Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(this,"permission denied",Toast.LENGTH_SHORT).show();
+            }
+            break;
+        }
+    }
+
+    private boolean checkPermissionFromDevice(){
+        int write_external_storage_resuly= ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int record_audio_result=ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
+        return write_external_storage_resuly== PackageManager.PERMISSION_GRANTED && record_audio_result==PackageManager.PERMISSION_GRANTED;
     }
 
 }

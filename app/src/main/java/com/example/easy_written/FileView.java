@@ -148,16 +148,17 @@ public class FileView extends AppCompatActivity {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/";
         File directory = new File(path);
         files = directory.listFiles();
-
-        for (int i = 0; i < files.length; i++) {
-            String name = files[i].getName();
-            String[] result = name.split("#");
-            filesNameList.add(result[0]);
-            filesDateList.add(result[1]);
-            Variable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
-            mArrayList.add(Variable.get(i));
+        if(files!=null) {
+            for (int i = 0; i < files.length; i++) {
+                String name = files[i].getName();
+                String[] result = name.split("#");
+                filesNameList.add(result[0]);
+                filesDateList.add(result[1]);
+                Variable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
+                mArrayList.add(Variable.get(i));
+            }
+            mAdapter.notifyDataSetChanged();
         }
-        mAdapter.notifyDataSetChanged();
     }
 
     public interface ClickListener {
