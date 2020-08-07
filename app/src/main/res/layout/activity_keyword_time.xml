@@ -29,13 +29,12 @@
         android:gravity="center"
         android:weightSum="1">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/AudioRunButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="1dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/launch_button" />
+            android:src="@drawable/ic_baseline_play_circle_filled_24" />
 
         <SeekBar
             android:id="@+id/AudioSeekBar"
