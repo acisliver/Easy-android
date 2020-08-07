@@ -87,11 +87,11 @@ public class KeywordTime extends Fragment {
                 PlayAndCancel(iwantplayaudio);
                 if(PlayAndCancelCheck==true) {
                     AudioRunButton.setImageDrawable(getResources().
-                            getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getActivity().getTheme()));
+                            getDrawable(R.drawable.ic_baseline_play_circle_filled_24, getActivity().getTheme()));
                 }
                 else{
                     AudioRunButton.setImageDrawable(getResources().
-                            getDrawable(R.drawable.ic_baseline_play_circle_filled_24, getActivity().getTheme()));
+                            getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getActivity().getTheme()));
                 }
             }
         });
