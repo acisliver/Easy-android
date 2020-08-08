@@ -154,7 +154,12 @@ public class FileView extends AppCompatActivity {
                 String[] result = name.split("#");
                 filesNameList.add(result[0]);
                 filesDateList.add(result[1]);
-                Variable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
+                String[] temdata=filesDateList.get(i).split(" ");
+                StringBuffer times=new StringBuffer(temdata[1]);
+                times.insert(2,"시");
+                times.insert(5,"분");
+                times.insert(8,"초");
+                Variable.add(new File_Data("날짜:"+temdata[0]+" "+times , "파일이름 : " + filesNameList.get(i)));
                 mArrayList.add(Variable.get(i));
             }
             mAdapter.notifyDataSetChanged();

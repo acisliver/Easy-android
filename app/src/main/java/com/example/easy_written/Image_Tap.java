@@ -69,6 +69,7 @@ public class Image_Tap extends Fragment {
 
 
         text_view=(TextView)view.findViewById(R.id.text_view);
+        text_view.setMovementMethod(new ScrollingMovementMethod());
 
         Image_MainAdpater image_mainAdpater=new Image_MainAdpater();
         imageTT=image_mainAdpater.counter();

@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.method.ScrollingMovementMethod;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
@@ -95,6 +96,7 @@ public class CV_record extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_c_v_record);
+
 
         int requestCode = 5;//STT permission request code
 
@@ -191,6 +193,7 @@ public class CV_record extends AppCompatActivity {
     }
     public void onSpeechButtonClicked(){
         TextView txt = (TextView)findViewById(R.id.RecordText);
+        txt.setMovementMethod(new ScrollingMovementMethod());
 
         if (continuousListeningStarted) {
             if (reco != null) {

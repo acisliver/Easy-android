@@ -11,6 +11,7 @@
 
     <TextView
         android:background="@drawable/custom_textviw"
+        android:scrollbars="vertical"
         android:id="@+id/RecordText"
         android:textSize="20dp"
         android:layout_width="300dp"

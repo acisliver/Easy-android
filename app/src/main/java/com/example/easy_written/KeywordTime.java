@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.SpannableString;
+import android.text.method.ScrollingMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class KeywordTime extends Fragment {
         STT=image_mainAdpater.counter();
         String STT2=STT+"/"+"STTtext.txt";
         iwantplayaudio=STT+"/"+ "_audio_record"+".3gp";
+        Log.i("iwantplayaudio",iwantplayaudio);
 
         //데이터 전달받기
         KeywordTimeBundle = getArguments();
@@ -78,6 +80,7 @@ public class KeywordTime extends Fragment {
 
         TextView textView=view.findViewById(R.id.setSTTTExtView);
         Highlighting highlighting=new Highlighting();
+        textView.setMovementMethod(new ScrollingMovementMethod());
         textView.setText(highlighting.highlight(ReadTextFile(STT2)));
 
         ImageView AudioRunButton=view.findViewById(R.id.AudioRunButton);
