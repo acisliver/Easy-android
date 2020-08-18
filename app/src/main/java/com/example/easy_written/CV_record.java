@@ -446,8 +446,6 @@ public class CV_record extends AppCompatActivity {
         mediaRecorder.setOutputFile(AudiopathSave);
     }
 
-
-
     public class PlayAndStop extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {

@@ -11,7 +11,7 @@ public class Highlighting {
     public SpannableString highlight(String text){
         String content = text;
         SpannableString spannableString = new SpannableString(content);
-        String word = "안드로이드";
+        String word = "해커톤";
         int start=content.indexOf(word);
         Log.i("start","start:"+start);
         while(start!=-1) {

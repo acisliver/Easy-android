@@ -79,10 +79,12 @@ public class FileView extends AppCompatActivity {
                 //수정 모드(하단 바 있을 시)
                 else {
                     checked = Variable.get(position).getChecked();
-                    if (checked == 0)
+                    if (checked == 0){
                         Variable.get(position).setChecked(1);
-                    else
+                    }
+                    else{
                         Variable.get(position).setChecked(0);
+                    }
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -105,6 +107,7 @@ public class FileView extends AppCompatActivity {
                     //삭제
                     case R.id.delete_tab: {
                         Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_SHORT).show();
+                        
                         return true;
                     }
                     //공유
