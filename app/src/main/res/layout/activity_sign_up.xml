@@ -31,7 +31,7 @@
             android:hint="아이디(이메일주소)"
             android:layout_marginBottom="20dp"
             android:layout_weight="0.7"
-            android:id="@+id/Temail"
+            android:id="@+id/signUpEmail"
             >
         </com.google.android.material.textfield.TextInputEditText>
 
@@ -50,21 +50,21 @@
         android:layout_height="wrap_content"
         android:hint="비밀번호"
         android:layout_marginBottom="20dp"
-        android:id="@+id/pass1">
+        android:id="@+id/signUpPassword">
     </com.google.android.material.textfield.TextInputEditText>
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="비밀번호 중복확인"
         android:layout_marginBottom="20dp"
-        android:id="@+id/pass2">
+        android:id="@+id/signUpPasswordChecked">
     </com.google.android.material.textfield.TextInputEditText>
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="이름(실명 입력)"
        android:layout_marginBottom="20dp"
-        android:id="@+id/id">
+        android:id="@+id/signUpName">
     </com.google.android.material.textfield.TextInputEditText>
     <LinearLayout
         android:layout_width="match_parent"
@@ -148,6 +148,7 @@
         android:gravity="center">
 
         <Button
+            android:id="@+id/signUpButton"
             android:textColor="#ffffff"
             android:text="회원 가입"
             android:textSize="25dp"

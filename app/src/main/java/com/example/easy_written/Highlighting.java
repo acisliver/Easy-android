@@ -7,19 +7,24 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 
+
 public class Highlighting {
     public SpannableString highlight(String text){
         String content = text;
+        String HighlightingWord="안드로이드";
         SpannableString spannableString = new SpannableString(content);
+<<<<<<< Updated upstream
         String word = "안드로이드";
         int start=content.indexOf(word);
+=======
+        int start=content.indexOf(HighlightingWord);
+>>>>>>> Stashed changes
         Log.i("start","start:"+start);
         while(start!=-1) {
-            int end = start + word.length();
+            int end = start + HighlightingWord.length();
             spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannableString.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            start = content.indexOf(word, start + 1);}
+            start = content.indexOf(HighlightingWord, start + 1);}
         return spannableString;
     }
-
 }

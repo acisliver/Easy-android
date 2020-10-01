@@ -15,6 +15,7 @@ public class ViewPageAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
+
         switch (position){
             case 0:
                 return Image_Tap.newInstance();

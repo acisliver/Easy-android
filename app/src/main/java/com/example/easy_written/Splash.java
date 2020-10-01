@@ -50,8 +50,32 @@ public class Splash extends AppCompatActivity {
             startActivity(new Intent(getApplication(), SelectMode.class)); //로딩이 끝난 후, ChoiceFunction 이동
             Splash.this.finish(); // 로딩페이지 Activity stack에서 제거
         }
+<<<<<<< Updated upstream
     }
 
+=======
+        if (permissions == null) {
+            return new String[0];
+        } else {
+            return permissions.clone();
+        }
+    }
+
+    /*
+     * ---------------------------------------------
+     *
+     * Activity Methods
+     *
+     * ---------------------------------------------
+     */
+
+    /**
+     * See if we now have all of the required dangerous permissions. Otherwise,
+     * tell the user that they cannot continue without granting the permissions,
+     * and then request the permissions again.
+     */
+    @TargetApi(23)
+>>>>>>> Stashed changes
     @Override
     public void onBackPressed() {
         //초반 플래시 화면에서 넘어갈때 뒤로가기 버튼 못누르게 함

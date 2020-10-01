@@ -134,7 +134,6 @@ public class CV_record extends AppCompatActivity {
                 mediaRecorder.stop();
                 mediaRecorder.release();
 
-
                 AlertDialog.Builder alert = new AlertDialog.Builder(CV_record.this);
                 alert.setMessage("파일이름");
 
@@ -476,9 +475,13 @@ public class CV_record extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if (StartAndStopCheck == 1) {
+<<<<<<< Updated upstream
                 if (checkPermissionFromDevice()) {
                     AudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ "_audio_record"+".3gp";
 
+=======
+                    AudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+ "_audio_record"+".3gp";
+>>>>>>> Stashed changes
                     setupMediaRecorder();
                     try {
                         mediaRecorder.prepare();

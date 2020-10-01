@@ -3,6 +3,7 @@ package com.example.easy_written;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -21,12 +22,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class KeywordTime extends Fragment {
     private View view;
@@ -37,6 +38,9 @@ public class KeywordTime extends Fragment {
     private MediaRecorder mediaRecorder;
     private String[] SplitKeyName;
     private static TextView setSTTString;
+    TextView textView;
+    Highlighting highlighting;
+    String STT2;
     private String STT;
     private int AudioDuration;
     private SeekBar AudioSeekBar;
@@ -60,7 +64,7 @@ public class KeywordTime extends Fragment {
 
         Image_MainAdpater image_mainAdpater=new Image_MainAdpater();
         STT=image_mainAdpater.counter();
-        String STT2=STT+"/"+"STTtext.txt";
+        STT2=STT+"/"+"STTtext.txt";
         iwantplayaudio=STT+"/"+ "_audio_record"+".3gp";
 
         //데이터 전달받기
@@ -76,8 +80,8 @@ public class KeywordTime extends Fragment {
         SpannableString content1 = new SpannableString("안드로이드");
         content1.setSpan(new UnderlineSpan(), 0, content1.length(), 0);
 
-        TextView textView=view.findViewById(R.id.setSTTTExtView);
-        Highlighting highlighting=new Highlighting();
+        textView=view.findViewById(R.id.setSTTTExtView);
+        highlighting=new Highlighting();
         textView.setText(highlighting.highlight(ReadTextFile(STT2)));
 
         ImageView AudioRunButton=view.findViewById(R.id.AudioRunButton);

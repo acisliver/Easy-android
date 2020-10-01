@@ -1,33 +1,42 @@
 package com.example.easy_written;
 
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
-import android.widget.Toast;
+import android.widget.Filter;
+import android.widget.Filterable;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 //참고 사이트 : https://webnautes.tistory.com/1300
 
-public class FileView extends AppCompatActivity {
+public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
     private CustomAdapter mAdapter;
     ArrayList<String> filesNameList = new ArrayList<>();
@@ -57,6 +66,13 @@ public class FileView extends AppCompatActivity {
         mAdapter = new CustomAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
 
+
+        //actionbar
+        androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false); // 기존 title 지우기
+        actionBar.setDisplayHomeAsUpEnabled(true); // 찾기 버튼 만들기
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 mLinearLayoutManager.getOrientation());
@@ -159,6 +175,31 @@ public class FileView extends AppCompatActivity {
         }
         mAdapter.notifyDataSetChanged();
     }
+
+    //파일 검색 icon
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.find_file_menu,menu);
+        MenuItem item=menu.findItem(R.id.search_file_icon);
+        SearchView searchView= (SearchView) item.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
 
     public interface ClickListener {
         void onClick(View view, int position);
