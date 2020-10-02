@@ -33,7 +33,8 @@ android {
     }
 
 }
-
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -70,4 +71,7 @@ dependencies {
     //kakao
     implementation group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
 
+
 }
+
+

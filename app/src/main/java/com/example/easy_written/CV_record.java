@@ -219,16 +219,14 @@ public class CV_record extends AppCompatActivity {
 
             reco.recognizing.addEventListener((s, e) -> {
                 if(e.getResult().getReason()==ResultReason.RecognizingSpeech){
-                    System.out.println("RECOGNIZING: Text=" +saved_text+ e.getResult().getText());
-                    txt.setText("RECOGNIZING: Text=" + saved_text+e.getResult().getText());
+                    txt.setText("" + saved_text+e.getResult().getText());
                 }
 
             });
             reco.recognized.addEventListener((s, e) -> {
                 if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
                     saved_text=saved_text+ e.getResult().getText();
-                    System.out.println("RECOGNIZED: Text="+saved_text);
-                    txt.setText("RECOGNIZED: Text=" + saved_text);
+                    txt.setText("" + saved_text);
                 }
                 else if (e.getResult().getReason() == ResultReason.NoMatch) {
                     System.out.println("NOMATCH: Speech could not be recognized.");
@@ -447,41 +445,11 @@ public class CV_record extends AppCompatActivity {
         mediaRecorder.setOutputFile(AudiopathSave);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case REQUEST_AUDIO_PEMISSION_CODE:
-            {
-                if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED)
-                    Toast.makeText(this,"permission granted",Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(this,"permission denied",Toast.LENGTH_SHORT).show();
-            }
-            break;
-        }
-    }
-
-
-
-    private boolean checkPermissionFromDevice(){
-        int write_external_storage_resuly= ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int record_audio_result=ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
-        return write_external_storage_resuly== PackageManager.PERMISSION_GRANTED && record_audio_result==PackageManager.PERMISSION_GRANTED;
-
-    }
-
     public class PlayAndStop extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             if (StartAndStopCheck == 1) {
-<<<<<<< Updated upstream
-                if (checkPermissionFromDevice()) {
-                    AudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ "_audio_record"+".3gp";
-
-=======
                     AudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+ "_audio_record"+".3gp";
->>>>>>> Stashed changes
                     setupMediaRecorder();
                     try {
                         mediaRecorder.prepare();
@@ -492,7 +460,6 @@ public class CV_record extends AppCompatActivity {
                     catch (IllegalStateException e){
                         e.printStackTrace();
                     }
-                }
                 StartAndStopCheck=0;
             }
             else if(StartAndStopCheck==0){
