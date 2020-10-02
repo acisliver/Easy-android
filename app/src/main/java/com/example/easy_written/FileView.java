@@ -1,6 +1,5 @@
 package com.example.easy_written;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;

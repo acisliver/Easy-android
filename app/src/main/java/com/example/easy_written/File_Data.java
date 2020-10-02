@@ -2,10 +2,13 @@ package com.example.easy_written;
 
 import android.widget.CheckBox;
 
+import java.util.ArrayList;
+
 public class File_Data {
     private String name;
     private String date;
     private int checked;
+
 
     public File_Data(String name,String date){
         this.name=name;
@@ -32,4 +35,5 @@ public class File_Data {
     public int getChecked() { return checked; }
 
     public void setChecked(int checked) { this.checked = checked; }
+
 }

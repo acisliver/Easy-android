@@ -1,15 +1,9 @@
 package com.example.easy_written;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-<<<<<<< Updated upstream
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
-public class SelectMode extends AppCompatActivity {
-=======
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Context;
@@ -40,13 +34,12 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
     private DrawerLayout mDrawerLayout;
     private Context context = this;
     private String photoUrl,name;
->>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_mode);
-        
+
         //main에서 넘어 온 값을 받는곳
         //main에서 로그인을 진행하기 때문에 값을 받음
         Intent intent=getIntent();
@@ -92,8 +85,6 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
                     startActivity(accountIntent);
                 }
 
-<<<<<<< Updated upstream
-=======
                 //설정정보로 이동
                 else if(id == R.id.setting){
                     Toast.makeText(context, title + ": 설정 정보를 확인합니다.", Toast.LENGTH_SHORT).show();
@@ -122,7 +113,6 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
         });
 
         //pc강의로 이동 버튼
->>>>>>> Stashed changes
         Button mode1=findViewById(R.id.mode1);
         mode1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,8 +130,6 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
                 startActivity(intent);
             }
         });
-<<<<<<< Updated upstream
-=======
 
         //google
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -218,7 +206,6 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
->>>>>>> Stashed changes
     }
 
 }
