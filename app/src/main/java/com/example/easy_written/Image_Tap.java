@@ -78,7 +78,7 @@ public class Image_Tap extends Fragment {
 
         //setText
         Highlighting highlighting=new Highlighting();
-        text_view.setText(highlighting.highlight(ReadTextFile(imageTT2)));
+        //text_view.setText(highlighting.highlight(ReadTextFile(imageTT2)));
 
         ImagePtahArrayList=new ArrayList<>();
 
