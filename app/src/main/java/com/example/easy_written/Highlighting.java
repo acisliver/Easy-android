@@ -13,7 +13,12 @@ public class Highlighting {
         String content = text;
         String HighlightingWord="안드로이드";
         SpannableString spannableString = new SpannableString(content);
+<<<<<<< Updated upstream
+        String word = "안드로이드";
+        int start=content.indexOf(word);
+=======
         int start=content.indexOf(HighlightingWord);
+>>>>>>> Stashed changes
         Log.i("start","start:"+start);
         while(start!=-1) {
             int end = start + HighlightingWord.length();
