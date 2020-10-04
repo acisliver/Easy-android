@@ -80,18 +80,14 @@ public class SignUp extends AppCompatActivity {
 
                                 //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
                                 HashMap<Object,String> hashMap = new HashMap<>();
-
                                 hashMap.put("uid",uid);
                                 hashMap.put("email",email);
                                 hashMap.put("name",name);
-//
-//                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                                DatabaseReference reference = database.getReference("Users");
-//                                reference.setValue("hashMap");
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                DatabaseReference reference = database.getReference("Users");
+                                reference.child(uid).setValue(hashMap);
 
-
-                                //-main에서 화면전환이 되기 때문에 intent말고 종료시켜도 되지 않을까?-
-                                //가입이 이루어져을시 가입 화면을 빠져나감.
+                                //로그인 완료시 화면전환
                                 Intent intent = new Intent(SignUp.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -101,9 +97,7 @@ public class SignUp extends AppCompatActivity {
                                 mDialog.dismiss();
                                 Toast.makeText(SignUp.this, "이미 존재하는 아이디 입니다.", Toast.LENGTH_SHORT).show();
                                 return;  //해당 메소드 진행을 멈추고 빠져나감.
-
                             }
-
                         }
                     });
 

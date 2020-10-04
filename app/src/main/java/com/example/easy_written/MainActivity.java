@@ -32,6 +32,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.kakao.auth.AuthType;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
@@ -61,11 +65,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Button btn_custom_login;
     private SessionCallback sessionCallback = new SessionCallback();
     Session session;
+    FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         //Edittext
         get_input_email=findViewById(R.id.inputEmail);
@@ -83,11 +103,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 Log.d("get_input_email",Temail);
                 Log.d("get_input_password",Tpassword);
-                if(Temail.equals("kyanggogo") && Tpassword.equals("kyanggogo")){
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(),"다시 입력해 주세요!",Toast.LENGTH_SHORT).show();
-                }
+
+                //logging in the user
+                userLogin(Temail,Tpassword);
             }
         });
 
@@ -143,6 +161,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if(Session.getCurrentSession().isOpened()==true){
             session.open(AuthType.KAKAO_LOGIN_ALL, MainActivity.this);
         }
+    }
+
+    //firebase userLogin method
+    private void userLogin(String UserEmail, String UserPassword){
+        firebaseAuth = FirebaseAuth.getInstance();
+        //logging in the user
+        firebaseAuth.signInWithEmailAndPassword(UserEmail, UserPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        if(task.isSuccessful()) {
+                            finish();
+                            startActivity(new Intent(getApplicationContext(), SelectMode.class));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "로그인 실패!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     //로그인 했을 시 뒤로가기 버튼으로 다시 로그인 화면이 뜨지 않도록 하기 위해 destroy부분에서 finish필요
@@ -296,5 +333,4 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     });
         }
     }
-
 }

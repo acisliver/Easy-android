@@ -87,8 +87,7 @@ public class CV_record extends AppCompatActivity {
 
 
     //기타
-    private Spinner spinner2;
-    ArrayList<String> arrayList;
+
     ArrayAdapter<String> arrayAdapter;
 
     @Override
@@ -100,20 +99,8 @@ public class CV_record extends AppCompatActivity {
 
         PicturePathList=new ArrayList<>();
 
-        //배속 설정
-        arrayList = new ArrayList<>();
-        arrayList.add("1.0배속");
-        arrayList.add("1.2배속");
-        arrayList.add("1.5배속");
-        arrayList.add("1.7배속");
-        arrayList.add("2.0배속");
 
-        arrayAdapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                arrayList);
 
-        spinner2 = (Spinner)findViewById(R.id.spinner2);
-        spinner2.setAdapter(arrayAdapter);
 
         //오디오
         StartAndStopButton = findViewById(R.id.StartAndStopButton);

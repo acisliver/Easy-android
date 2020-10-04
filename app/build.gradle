@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.3"
 
     packagingOptions {
@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.example.easy_written"
         minSdkVersion 25
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -66,7 +66,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'//글라이드 이미지 로딩
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'//글라이드 이미지 로딩2
 
-    implementation 'com.google.firebase:firebase-database:16.0.5'
+    implementation 'com.google.firebase:firebase-database:19.4.0'
 
     //kakao
     implementation group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
