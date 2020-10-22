@@ -25,13 +25,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.kakao.auth.Session;
 
 public class UserAccount extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private TextView user_id,user_email;
+    private TextView user_id;
     private ImageView user_profile;
     private DrawerLayout mDrawerLayout;
     private String name,email,image;
+    private FirebaseAuth accountfirebaseAuth;
 
 
     @Override
@@ -40,7 +44,6 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
         setContentView(R.layout.activity_user_account);
 
         user_id=findViewById(R.id.user_id);
-        user_email=findViewById(R.id.user_email);
         user_profile=findViewById(R.id.user_profile);
 
         Intent getintent=getIntent();
@@ -54,19 +57,24 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
             email = acct.getEmail();
             Uri personPhoto = acct.getPhotoUrl();
             user_id.setText(name);
-            user_email.setText(email);
             Glide.with(this).load(personPhoto).into(user_profile);
 
         }
 
 
-        //kakao login
-        if(Session.getCurrentSession().isOpened()){
+        //카카오로 로그인 했을 시
+        else if(Session.getCurrentSession().isOpened()){
             user_id.setText(name);
             if(image!=null)
                 Glide.with(this).load(image).into(user_profile);
             else
                 Glide.with(this).load(R.drawable.easyicon2).into(user_profile);
+        }
+
+        //회원가입후 로그인 했을 시
+        else{
+            //이름 넣어 줘야 함
+            Glide.with(this).load(R.drawable.easyicon2).into(user_profile);
         }
 
 
@@ -103,10 +111,6 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
                     Toast.makeText(getApplicationContext(),"이미 계정모드 입니다.", Toast.LENGTH_SHORT).show();
                 }
 
-                //설정정보로 이동
-                else if(id == R.id.setting){
-                    Toast.makeText(getApplicationContext(),"설정 정보를 확인합니다.", Toast.LENGTH_SHORT).show();
-                }
 
                 //로그아웃
                 else if(id == R.id.logout){
@@ -116,7 +120,6 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
                         SelectMode selectMode=new SelectMode();
                         selectMode.google_logout();
                         finish();
-
                     }
 
                     //kakao 아이디로 로그인 했을 경우

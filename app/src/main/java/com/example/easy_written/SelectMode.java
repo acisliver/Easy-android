@@ -85,11 +85,6 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
                     startActivity(accountIntent);
                 }
 
-                //설정정보로 이동
-                else if(id == R.id.setting){
-                    Toast.makeText(context, title + ": 설정 정보를 확인합니다.", Toast.LENGTH_SHORT).show();
-                }
-
                 //로그아웃
                 else if(id == R.id.logout){
                     //google 아이디로 로그인 했을 경우

@@ -8,12 +8,6 @@
             android:title="계정"
             />
         <item
-            android:id="@+id/setting"
-            android:icon="@drawable/ic_launcher_foreground"
-            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:title="설정"
-            />
-        <item
             android:id="@+id/logout"
             android:icon="@drawable/ic_launcher_foreground"
             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
