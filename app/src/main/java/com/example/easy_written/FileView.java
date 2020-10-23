@@ -26,12 +26,12 @@ import java.util.ArrayList;
 public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
     private CustomAdapter mAdapter;
-    ArrayList<String> filesNameList = new ArrayList<>();
-    ArrayList<String> filesDateList = new ArrayList<>();
-    ArrayList<File_Data> mVariable = new ArrayList<>();
-    private File[] files;
-    private int modify_flag;
-    private int checked;
+    private ArrayList<String> filesNameList = new ArrayList<>();
+    private ArrayList<String> filesDateList = new ArrayList<>();
+    private ArrayList<File_Data> mVariable = new ArrayList<>();
+    private File[] mFiles;
+    private int mModifyFlag;
+    private int mChecked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +40,10 @@ public class FileView extends AppCompatActivity  {
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_list);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        modify_flag = 0;
-
         final CheckBox check_all = findViewById(R.id.check_all);
-
+        mModifyFlag = 0;
         mArrayList = new ArrayList<>();
-
         mAdapter = new CustomAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -67,20 +63,19 @@ public class FileView extends AppCompatActivity  {
             //파일 클릭 시
             @Override
             public void onClick(View view, int position) {//recycler list 하나씩 위치에 따라 다른 화면 띄우기, 지금은 파일 하나만 했음
-                if (modify_flag == 0) {
+                if (mModifyFlag == 0) {
                     Intent intent = new Intent(getBaseContext(), Image_MainAdpater.class);
-
                     //파일값 넘기기
                     intent.putExtra("filesNameList", filesNameList.get(position));
                     intent.putExtra("filesDateList", filesDateList.get(position));
-                    intent.putExtra("paths", files[position].getPath());
+                    intent.putExtra("paths", mFiles[position].getPath());
 
                     startActivity(intent);
                 }
                 //수정 모드(하단 바 있을 시)
                 else {
-                    checked = mVariable.get(position).getChecked();
-                    if (checked == 0)
+                    mChecked = mVariable.get(position).getChecked();
+                    if (mChecked == 0)
                         mVariable.get(position).setChecked(1);
                     else
                         mVariable.get(position).setChecked(0);
@@ -90,8 +85,8 @@ public class FileView extends AppCompatActivity  {
 
             @Override
             public void onLongClick(View view, int position) {
-                modify_flag = 1;
-                handleVisible(modify_flag);
+                mModifyFlag = 1;
+                handleVisible(mModifyFlag);
                 mAdapter.notifyDataSetChanged();
             }
         }));
@@ -118,8 +113,8 @@ public class FileView extends AppCompatActivity  {
                     }
                     //하단 바 내리기
                     case R.id.close_tab: {
-                        modify_flag = 0;
-                        handleVisible(modify_flag);
+                        mModifyFlag = 0;
+                        handleVisible(mModifyFlag);
                         mAdapter.notifyDataSetChanged();
                         return true;
                     }
@@ -146,10 +141,10 @@ public class FileView extends AppCompatActivity  {
 
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/";
         File directory = new File(path);
-        files = directory.listFiles();
+        mFiles = directory.listFiles();
 
-        for (int i = 0; i < files.length; i++) {
-            String name = files[i].getName();
+        for (int i = 0; i < mFiles.length; i++) {
+            String name = mFiles[i].getName();
             String[] result = name.split("#");
             filesNameList.add(result[0]);
             filesDateList.add(result[1]);
@@ -157,6 +152,18 @@ public class FileView extends AppCompatActivity  {
             mArrayList.add(mVariable.get(i));
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    //뒤로가기버튼 활성화
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:{
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //파일 검색 icon

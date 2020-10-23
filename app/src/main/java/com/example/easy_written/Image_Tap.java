@@ -21,12 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Image_Tap extends Fragment {
@@ -38,12 +33,11 @@ public class Image_Tap extends Fragment {
     private int mShortAnimationDuration;
     private ArrayList<String> mImagePtahArrayList;
     private ArrayList<ImageView> mImageViewArrayList;
-    
+
     public static Image_Tap newInstance(){
         Image_Tap mImageTap=new Image_Tap();
         return mImageTap;
     }
-
 
     @Nullable
     @Override
