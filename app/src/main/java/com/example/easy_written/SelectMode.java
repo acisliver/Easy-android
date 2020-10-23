@@ -15,9 +15,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,7 +26,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.Session;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
@@ -34,6 +34,8 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
     private DrawerLayout mDrawerLayout;
     private Context context = this;
     private String photoUrl,name;
+    private FirebaseAuth auth;  //파이어 베이스 인증 객체
+    private GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,17 +128,18 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
             }
         });
 
-        //google
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        MainActivity.googleApiClient=new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
-                .build();
-        MainActivity.auth=FirebaseAuth.getInstance();//파이어 베이스 인증 객체 초기화
-
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+        if (acct != null) {
+            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            googleApiClient=new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this,this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
+                    .build();
+            auth=FirebaseAuth.getInstance();
+        }
     }
 
     @Override
@@ -151,14 +154,14 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
     }
 
     //google 로그아웃
-    void google_logout() {
-        MainActivity.googleApiClient.connect();
-        MainActivity.googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+   private void google_logout() {
+        googleApiClient.connect();
+        googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle bundle) {
-                MainActivity.auth.signOut();
-                if(MainActivity.googleApiClient.isConnected()){
-                    Auth.GoogleSignInApi.signOut(MainActivity.googleApiClient).setResultCallback(new ResultCallback<Status>() {
+                auth.signOut();
+                if(googleApiClient.isConnected()){
+                    Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(@NonNull Status status) {
                             if(status.isSuccess()){
@@ -183,7 +186,7 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
         });
     }
 
-    void kakao_logout(){
+    private void kakao_logout(){
         UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
             @Override
             public void onCompleteLogout() {

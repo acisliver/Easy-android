@@ -1,28 +1,20 @@
 package com.example.easy_written;
 
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.Filter;
-import android.widget.Filterable;
-
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,18 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-
-//참고 사이트 : https://webnautes.tistory.com/1300
 
 public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
     private CustomAdapter mAdapter;
     ArrayList<String> filesNameList = new ArrayList<>();
     ArrayList<String> filesDateList = new ArrayList<>();
-    ArrayList<File_Data> Variable = new ArrayList<>();
+    ArrayList<File_Data> mVariable = new ArrayList<>();
     File[] files;
     //고대은
     private int modify_flag;
@@ -94,11 +81,11 @@ public class FileView extends AppCompatActivity  {
                 }
                 //수정 모드(하단 바 있을 시)
                 else {
-                    checked = Variable.get(position).getChecked();
+                    checked = mVariable.get(position).getChecked();
                     if (checked == 0)
-                        Variable.get(position).setChecked(1);
+                        mVariable.get(position).setChecked(1);
                     else
-                        Variable.get(position).setChecked(0);
+                        mVariable.get(position).setChecked(0);
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -155,7 +142,7 @@ public class FileView extends AppCompatActivity  {
                 if (check_all.isChecked()==true) checked=1;
                 else checked=0;
                 for (int pos=0;pos<count;pos++){
-                    Variable.get(pos).setChecked(checked);
+                    mVariable.get(pos).setChecked(checked);
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -170,8 +157,8 @@ public class FileView extends AppCompatActivity  {
             String[] result = name.split("#");
             filesNameList.add(result[0]);
             filesDateList.add(result[1]);
-            Variable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
-            mArrayList.add(Variable.get(i));
+            mVariable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
+            mArrayList.add(mVariable.get(i));
         }
         mAdapter.notifyDataSetChanged();
     }

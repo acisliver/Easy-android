@@ -2,26 +2,23 @@ package com.example.easy_written;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
 import com.google.android.material.tabs.TabLayout;
 
 public class Image_MainAdpater extends AppCompatActivity {
 
-    private FragmentStatePagerAdapter fragmentPagerAdapter;
-    private String getfilesNameList,getPaths,getfilesDateList;
-    private Bundle imageMainBundle,keyWordTimeBundle;
-    public static String s;
-    public static String d;
+    private FragmentStatePagerAdapter mFragmentPagerAdapter;
+    private String mGetfilesNameList,mGetPaths,mGetfilesDateList;
+    private Bundle mImageMainBundle,mKeyWordTimeBundle;
+    public static String mS;
+    public static String mD;
 
     public String counter(){
-        return s;
+        return mS;
     }
-    public String Imagecounter(){
-        return d;
+    public String Imagecounter(){ return mD;
     }
 
     @Override
@@ -30,37 +27,36 @@ public class Image_MainAdpater extends AppCompatActivity {
         setContentView(R.layout.activity_adepter);
 
         ViewPager viewPager=findViewById(R.id.viewpager);
-        fragmentPagerAdapter=new ViewPageAdapter(getSupportFragmentManager());
+        mFragmentPagerAdapter=new ViewPageAdapter(getSupportFragmentManager());
 
         TabLayout tableLayout=(TabLayout) findViewById(R.id.tab_layout);
-        viewPager.setAdapter(fragmentPagerAdapter);
+        viewPager.setAdapter(mFragmentPagerAdapter);
         tableLayout.setupWithViewPager(viewPager);
 
         //Fileview에서 값 받음
         Intent getIntent=getIntent();
-        getfilesNameList=getIntent.getStringExtra("filesNameList");
-        getPaths=getIntent.getStringExtra("paths");
-        getfilesDateList=getIntent.getStringExtra("filesDateList");
-
+        mGetfilesNameList=getIntent.getStringExtra("filesNameList");
+        mGetPaths=getIntent.getStringExtra("paths");
+        mGetfilesDateList=getIntent.getStringExtra("filesDateList");
 
         //Image_Tap에 값 전달
         Image_Tap imageTapFragment = new Image_Tap();
-        imageMainBundle = new Bundle();
-        imageMainBundle.putString("imageFileNamedata",getfilesNameList);
-        imageMainBundle.putString("imageFileDatedata",getfilesDateList);
-        imageMainBundle.putString("imagePathdata",getPaths);
-        d=imageMainBundle.getString("imagePathdata");
-        imageTapFragment.setArguments(imageMainBundle);
+        mImageMainBundle = new Bundle();
+        mImageMainBundle.putString("imageFileNamedata",mGetfilesNameList);
+        mImageMainBundle.putString("imageFileDatedata",mGetfilesDateList);
+        mImageMainBundle.putString("imagePathdata",mGetPaths);
+        mD=mImageMainBundle.getString("imagePathdata");
+        imageTapFragment.setArguments(mImageMainBundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.viewpager,imageTapFragment).commitNow();
 
         //KeywordTime에 값 전달
         KeywordTime keywordTimeFragment=new KeywordTime();
-        keyWordTimeBundle=new Bundle();
-        keyWordTimeBundle.putString("keyFileNamedata",getfilesNameList);
-        keyWordTimeBundle.putString("keyFileDatedata",getfilesDateList);
-        keyWordTimeBundle.putString("keyPathdata",getPaths);
-        s=keyWordTimeBundle.getString("keyPathdata");
-        keywordTimeFragment.setArguments(keyWordTimeBundle);
+        mKeyWordTimeBundle=new Bundle();
+        mKeyWordTimeBundle.putString("keyFileNamedata",mGetfilesNameList);
+        mKeyWordTimeBundle.putString("keyFileDatedata",mGetfilesDateList);
+        mKeyWordTimeBundle.putString("keyPathdata",mGetPaths);
+        mS=mKeyWordTimeBundle.getString("keyPathdata");
+        keywordTimeFragment.setArguments(mKeyWordTimeBundle);
         //getSupportFragmentManager().beginTransaction().replace(R.id.viewpager,keywordTimeFragment).commitNow();
 
 

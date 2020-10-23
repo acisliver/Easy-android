@@ -3,7 +3,6 @@ package com.example.easy_written;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,13 +11,9 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -39,7 +34,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.kakao.auth.AuthType;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
-import com.kakao.network.ApiErrorCode;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.MeV2ResponseCallback;
@@ -48,7 +42,6 @@ import com.kakao.usermgmt.response.model.Profile;
 import com.kakao.usermgmt.response.model.UserAccount;
 import com.kakao.util.OptionalBoolean;
 import com.kakao.util.exception.KakaoException;
-
 import java.security.MessageDigest;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -57,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String Temail,Tpassword;
 
     private SignInButton google_sign_button; //구글 로그인 버튼
-    public static FirebaseAuth auth;  //파이어 베이스 인증 객체
-    public static GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
+    private FirebaseAuth auth;  //파이어 베이스 인증 객체
+    private GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
     private static final int fire_sign_google=100;  //구글 로그인 결과 코드
 
     //kakao

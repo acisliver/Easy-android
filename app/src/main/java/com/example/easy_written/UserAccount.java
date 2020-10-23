@@ -1,11 +1,11 @@
 package com.example.easy_written;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -23,19 +22,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.kakao.auth.Session;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
 
 public class UserAccount extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private TextView user_id;
     private ImageView user_profile;
     private DrawerLayout mDrawerLayout;
     private String name,email,image;
-    private FirebaseAuth accountfirebaseAuth;
+    private FirebaseAuth auth;  //파이어 베이스 인증 객체
+    private GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
 
 
     @Override
@@ -53,6 +54,15 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
         //구글로 로그인 했을 시
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
         if (acct != null) {
+            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            googleApiClient=new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this,this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
+                    .build();
+            auth=FirebaseAuth.getInstance();
             name = acct.getDisplayName();
             email = acct.getEmail();
             Uri personPhoto = acct.getPhotoUrl();
@@ -116,16 +126,13 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
                 else if(id == R.id.logout){
                     //google 아이디로 로그인 했을 경우
                     if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                        MainActivity.googleApiClient.connect();
-                        SelectMode selectMode=new SelectMode();
-                        selectMode.google_logout();
+                        google_logout();
                         finish();
                     }
 
                     //kakao 아이디로 로그인 했을 경우
                     if(Session.getCurrentSession().isOpened()){
-                       SelectMode selectMode=new SelectMode();
-                       selectMode.kakao_logout();
+                        kakao_logout();
                        finish();
                     }
                     Intent intent=new Intent(getApplicationContext(),MainActivity.class);
@@ -134,6 +141,46 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
                 }
 
                 return true;
+            }
+        });
+    }
+    //google 로그아웃
+    private void google_logout() {
+        googleApiClient.connect();
+        googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+            @Override
+            public void onConnected(@Nullable Bundle bundle) {
+                auth.signOut();
+                if(googleApiClient.isConnected()){
+                    Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            if(status.isSuccess()){
+                                Log.e("google로그아웃","성공");
+                                setResult(1);
+                            }else{
+                                Log.e("google로그아웃","실패");
+                                setResult(0);
+                            }
+                            finish();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onConnectionSuspended(int i) {
+                setResult(-1);
+                finish();
+
+            }
+        });
+    }
+    private void kakao_logout(){
+        UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                Log.e("kakao로그아웃","성공");
             }
         });
     }
