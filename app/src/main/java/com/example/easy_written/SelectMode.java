@@ -6,7 +6,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import android.content.Context;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,10 +32,9 @@ import com.kakao.usermgmt.callback.LogoutResponseCallback;
 
 public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
     private DrawerLayout mDrawerLayout;
-    private Context context = this;
-    private String photoUrl,name;
-    private FirebaseAuth auth;  //파이어 베이스 인증 객체
-    private GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
+    private String mPhotoUrl, mName;
+    private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
+    private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체\
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,101 +43,98 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
 
         //main에서 넘어 온 값을 받는곳
         //main에서 로그인을 진행하기 때문에 값을 받음
-        Intent intent=getIntent();
-        name=intent.getStringExtra("name");
-        photoUrl=intent.getStringExtra("photoUrl");
+        Intent mIntent=getIntent();
+        mName =mIntent.getStringExtra("name");
+        mPhotoUrl =mIntent.getStringExtra("photoUrl");
 
         //메뉴
-        NavigationView navigationViewing = (NavigationView) findViewById(R.id.nav_view);
-        View headerView = navigationViewing.getHeaderView(0);
-        TextView navUsername = (TextView) headerView.findViewById(R.id.navi_user_id);
-        navUsername.setText(name);
-        ImageView navi_user_image = headerView.findViewById(R.id.navi_user_image);
-        if(photoUrl!=null)
-            Glide.with(this).load(photoUrl).into(navi_user_image);
+        NavigationView mNavigationViewing = (NavigationView) findViewById(R.id.nav_view);
+        View mHeaderView = mNavigationViewing.getHeaderView(0);
+        TextView mNavUsername = (TextView) mHeaderView.findViewById(R.id.navi_user_id);
+        mNavUsername.setText(mName);
+        ImageView mVaviUserImage = mHeaderView.findViewById(R.id.navi_user_image);
+        if(mPhotoUrl !=null)
+            Glide.with(this).load(mPhotoUrl).into(mVaviUserImage);
         else
-            Glide.with(this).load(R.drawable.easyicon2).into(navi_user_image);
+            Glide.with(this).load(R.drawable.easyicon2).into(mVaviUserImage);
 
         //actionbar
-        androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false); // 기존 title 지우기
-        actionBar.setDisplayHomeAsUpEnabled(true); // 메뉴 버튼 만들기
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24); //메뉴 버튼 이미지 지정
+        androidx.appcompat.widget.Toolbar mToolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setDisplayShowTitleEnabled(false); // 기존 title 지우기
+        mActionBar.setDisplayHomeAsUpEnabled(true); // 메뉴 버튼 만들기
+        mActionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24); //메뉴 버튼 이미지 지정
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
 
                 int id = menuItem.getItemId();
-                String title = menuItem.getTitle().toString();
 
                 //계정정보로 이동
                 if(id == R.id.account){
-                    Intent accountIntent=new Intent(getApplicationContext(),UserAccount.class);
-                    accountIntent.putExtra("name",name);
-                    accountIntent.putExtra("photoUrl",photoUrl);
-                    startActivity(accountIntent);
+                    Intent mAccountIntent=new Intent(getApplicationContext(),UserAccount.class);
+                    mAccountIntent.putExtra("name", mName);
+                    mAccountIntent.putExtra("photoUrl", mPhotoUrl);
+                    startActivity(mAccountIntent);
                 }
 
                 //로그아웃
                 else if(id == R.id.logout){
                     //google 아이디로 로그인 했을 경우
                     if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                        google_logout();
+                        GoogleLogout();
                         finish();
                     }
 
                     //kakao 아이디로 로그인 했을 경우
                     if(Session.getCurrentSession().isOpened()){
-                        kakao_logout();
+                        KakaoLogout();
                         finish();
                     }
-                    Intent intent=new Intent(getApplicationContext(),MainActivity.class);
-                    startActivity(intent);
-
+                    Intent mIntent=new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(mIntent);
                 }
-
                 return true;
             }
         });
 
         //pc강의로 이동 버튼
-        Button mode1=findViewById(R.id.mode1);
-        mode1.setOnClickListener(new View.OnClickListener() {
+        Button mMode1=findViewById(R.id.mode1);
+        mMode1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(SelectMode.this,CV_record.class);
-                startActivity(intent);
+                Intent mIntent=new Intent(SelectMode.this,CV_record.class);
+                startActivity(mIntent);
             }
         });
 
-        Button SelectFile=findViewById(R.id.SelectFile);
-        SelectFile.setOnClickListener(new View.OnClickListener() {
+        Button mSelectFile=findViewById(R.id.SelectFile);
+        mSelectFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(SelectMode.this,FileView.class);
-                startActivity(intent);
+                Intent mIntent=new Intent(SelectMode.this,FileView.class);
+                startActivity(mIntent);
             }
         });
 
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-        if (acct != null) {
+        GoogleSignInAccount mAcct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+        if (mAcct != null) {
             GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
                     .build();
-            googleApiClient=new GoogleApiClient.Builder(this)
+            mGoogleApiClient =new GoogleApiClient.Builder(this)
                     .enableAutoManage(this,this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
                     .build();
-            auth=FirebaseAuth.getInstance();
+            mAuth =FirebaseAuth.getInstance();
         }
     }
 
@@ -154,21 +150,19 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
     }
 
     //google 로그아웃
-   private void google_logout() {
-        googleApiClient.connect();
-        googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+   private void GoogleLogout() {
+        mGoogleApiClient.connect();
+        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle bundle) {
-                auth.signOut();
-                if(googleApiClient.isConnected()){
-                    Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
+                mAuth.signOut();
+                if(mGoogleApiClient.isConnected()){
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(@NonNull Status status) {
                             if(status.isSuccess()){
-                                Log.e("google로그아웃","성공");
                                 setResult(1);
                             }else{
-                                Log.e("google로그아웃","실패");
                                 setResult(0);
                             }
                             finish();
@@ -186,11 +180,10 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
         });
     }
 
-    private void kakao_logout(){
+    private void KakaoLogout(){
         UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
             @Override
             public void onCompleteLogout() {
-                Log.e("kakao로그아웃","성공");
             }
         });
     }
@@ -203,7 +196,5 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
-
 }

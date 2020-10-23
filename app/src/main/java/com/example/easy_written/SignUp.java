@@ -22,9 +22,9 @@ import java.util.HashMap;
 public class SignUp extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
-    EditText signUpEmail, signUpPassword, signUpPasswordChecked, signUpName;
-    Button signUpButton;
-    private FirebaseAuth firebaseAuth;
+    private EditText mSignUpEmail, mSignUpPassword, mSignUpPasswordChecked, mSignUpName;
+    private Button mSignUpButton;
+    private FirebaseAuth mFirebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,36 +32,32 @@ public class SignUp extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         //파이어베이스 접근 설정
-        // user = firebaseAuth.getCurrentUser();
-        firebaseAuth =  FirebaseAuth.getInstance();
-        //firebaseDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirebaseAuth =  FirebaseAuth.getInstance();
 
-        signUpEmail = findViewById(R.id.signUpEmail);
-        signUpPassword = findViewById(R.id.signUpPassword);
-        signUpPasswordChecked = findViewById(R.id.signUpPasswordChecked);
-        signUpName = findViewById(R.id.signUpName);
-        signUpButton = findViewById(R.id.signUpButton);
-
-        //파이어베이스 user 로 접근
+        mSignUpEmail = findViewById(R.id.signUpEmail);
+        mSignUpPassword = findViewById(R.id.signUpPassword);
+        mSignUpPasswordChecked = findViewById(R.id.signUpPasswordChecked);
+        mSignUpName = findViewById(R.id.signUpName);
+        mSignUpButton = findViewById(R.id.signUpButton);
 
         //가입버튼 클릭리스너   -->  firebase에 데이터를 저장한다.
-        signUpButton.setOnClickListener(new View.OnClickListener(){
+        mSignUpButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 //가입 정보 가져오기
-                final String email = signUpEmail.getText().toString().trim();
-                String pwd = signUpPassword.getText().toString().trim();
-                String pwdcheck = signUpPasswordChecked.getText().toString().trim();
+                final String mEmail = mSignUpEmail.getText().toString().trim();
+                final String mPwd = mSignUpPassword.getText().toString().trim();
+                final String mPwdcheck = mSignUpPasswordChecked.getText().toString().trim();
 
 
-                if(pwd.equals(pwdcheck)) {
-                    Log.d(TAG, "등록 버튼 " + email + " , " + pwd);
+                if(mPwd.equals(mPwdcheck)) {
+                    Log.d(TAG, "등록 버튼 " + mEmail + " , " + mPwd);
                     final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
                     mDialog.setMessage("가입중입니다...");
                     mDialog.show();
 
                     //파이어베이스에 신규계정 등록하기
-                    firebaseAuth.createUserWithEmailAndPassword(email, pwd)
+                    mFirebaseAuth.createUserWithEmailAndPassword(mEmail, mPwd)
                             .addOnCompleteListener(SignUp.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -69,23 +65,23 @@ public class SignUp extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 mDialog.dismiss();
 
-                                FirebaseUser user = firebaseAuth.getCurrentUser();
-                                String email = user.getEmail();
-                                String uid = user.getUid();
-                                String name = signUpName.getText().toString().trim();
+                                FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                                String UserEmail = user.getEmail();
+                                String UserId = user.getUid();
+                                String UserName = mSignUpName.getText().toString().trim();
 
                                 //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
                                 HashMap<Object,String> hashMap = new HashMap<>();
-                                hashMap.put("uid",uid);
-                                hashMap.put("email",email);
-                                hashMap.put("name",name);
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference reference = database.getReference("Users");
-                                reference.child(uid).setValue(hashMap);
+                                hashMap.put("uid",UserId);
+                                hashMap.put("email",UserEmail);
+                                hashMap.put("name",UserName);
+                                FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+                                DatabaseReference mReference = mDatabase.getReference("Users");
+                                mReference.child(UserId).setValue(hashMap);
 
                                 //로그인 완료시 화면전환
-                                Intent intent = new Intent(SignUp.this, MainActivity.class);
-                                startActivity(intent);
+                                Intent mIntent = new Intent(SignUp.this, MainActivity.class);
+                                startActivity(mIntent);
                                 finish();
                                 Toast.makeText(SignUp.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_SHORT).show();
 

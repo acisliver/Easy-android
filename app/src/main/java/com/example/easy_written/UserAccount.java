@@ -6,6 +6,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,9 +23,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kakao.auth.Session;
@@ -31,25 +35,25 @@ import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 
 public class UserAccount extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private TextView user_id;
-    private ImageView user_profile;
+    private TextView mUserId;
+    private ImageView mUserProfile;
     private DrawerLayout mDrawerLayout;
-    private String name,email,image;
-    private FirebaseAuth auth;  //파이어 베이스 인증 객체
-    private GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
-
+    private String mName, mEmail, mImage;
+    private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
+    private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account);
 
-        user_id=findViewById(R.id.user_id);
-        user_profile=findViewById(R.id.user_profile);
+        mUserId =findViewById(R.id.user_id);
+        mUserProfile =findViewById(R.id.user_profile);
 
         Intent getintent=getIntent();
-        name=getintent.getStringExtra("name");
-        image=getintent.getStringExtra("photoUrl");
+        mName =getintent.getStringExtra("name");
+        mImage =getintent.getStringExtra("photoUrl");
 
         //구글로 로그인 했을 시
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
@@ -58,50 +62,47 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
                     .build();
-            googleApiClient=new GoogleApiClient.Builder(this)
+            mGoogleApiClient =new GoogleApiClient.Builder(this)
                     .enableAutoManage(this,this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
                     .build();
-            auth=FirebaseAuth.getInstance();
-            name = acct.getDisplayName();
-            email = acct.getEmail();
+            mAuth =FirebaseAuth.getInstance();
+            mName = acct.getDisplayName();
+            mEmail = acct.getEmail();
             Uri personPhoto = acct.getPhotoUrl();
-            user_id.setText(name);
-            Glide.with(this).load(personPhoto).into(user_profile);
-
+            mUserId.setText(mName);
+            Glide.with(this).load(personPhoto).into(mUserProfile);
         }
-
 
         //카카오로 로그인 했을 시
         else if(Session.getCurrentSession().isOpened()){
-            user_id.setText(name);
-            if(image!=null)
-                Glide.with(this).load(image).into(user_profile);
+            mUserId.setText(mName);
+            if(mImage !=null)
+                Glide.with(this).load(mImage).into(mUserProfile);
             else
-                Glide.with(this).load(R.drawable.easyicon2).into(user_profile);
+                Glide.with(this).load(R.drawable.easyicon2).into(mUserProfile);
         }
 
         //회원가입후 로그인 했을 시
         else{
             //이름 넣어 줘야 함
-            Glide.with(this).load(R.drawable.easyicon2).into(user_profile);
+            Glide.with(this).load(R.drawable.easyicon2).into(mUserProfile);
         }
 
-
         //메뉴
-        NavigationView navigationViewing = (NavigationView) findViewById(R.id.nav_view);
-        View headerView = navigationViewing.getHeaderView(0);
-        TextView navUsername = (TextView) headerView.findViewById(R.id.navi_user_id);
-        navUsername.setText(name);
-        ImageView navi_user_image = headerView.findViewById(R.id.navi_user_image);
-        if(image!=null)
-            Glide.with(this).load(image).into(navi_user_image);
+        NavigationView mNavigationViewing = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = mNavigationViewing.getHeaderView(0);
+        TextView mNavUsername = (TextView) headerView.findViewById(R.id.navi_user_id);
+        mNavUsername.setText(mName);
+        ImageView mNaviUserImage = headerView.findViewById(R.id.navi_user_image);
+        if(mImage !=null)
+            Glide.with(this).load(mImage).into(mNaviUserImage);
         else
-            Glide.with(this).load(R.drawable.easyicon2).into(navi_user_image);
+            Glide.with(this).load(R.drawable.easyicon2).into(mNaviUserImage);
 
         //액션바
-        androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        androidx.appcompat.widget.Toolbar mToolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false); // 기존 title 지우기
         actionBar.setDisplayHomeAsUpEnabled(true); // 메뉴 버튼 만들기
@@ -109,30 +110,29 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
-                int id = menuItem.getItemId();
+                int mId = menuItem.getItemId();
                 //계정정보로 이동
-                if(id == R.id.account){
+                if(mId == R.id.account){
                     Toast.makeText(getApplicationContext(),"이미 계정모드 입니다.", Toast.LENGTH_SHORT).show();
                 }
 
-
                 //로그아웃
-                else if(id == R.id.logout){
+                else if(mId == R.id.logout){
                     //google 아이디로 로그인 했을 경우
-                    if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                        google_logout();
+                    if(GoogleSignIn.getLastSignedInAccount(context)!=null){
+                        GoogleLogout();
                         finish();
                     }
 
                     //kakao 아이디로 로그인 했을 경우
                     if(Session.getCurrentSession().isOpened()){
-                        kakao_logout();
+                        KakaoLogout();
                        finish();
                     }
                     Intent intent=new Intent(getApplicationContext(),MainActivity.class);
@@ -144,15 +144,16 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
             }
         });
     }
+
     //google 로그아웃
-    private void google_logout() {
-        googleApiClient.connect();
-        googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+    private void GoogleLogout() {
+        mGoogleApiClient.connect();
+        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle bundle) {
-                auth.signOut();
-                if(googleApiClient.isConnected()){
-                    Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
+                mAuth.signOut();
+                if(mGoogleApiClient.isConnected()){
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(@NonNull Status status) {
                             if(status.isSuccess()){
@@ -176,7 +177,7 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
             }
         });
     }
-    private void kakao_logout(){
+    private void KakaoLogout(){
         UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
             @Override
             public void onCompleteLogout() {

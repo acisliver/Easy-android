@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -45,60 +46,39 @@ import com.kakao.util.exception.KakaoException;
 import java.security.MessageDigest;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private EditText get_input_email;
-    private EditText get_input_password;
-    private String Temail,Tpassword;
+    private EditText mGetInputEmail;
+    private EditText mGetInputPassword;
+    private String mEmail, mPassword;
 
-    private SignInButton google_sign_button; //구글 로그인 버튼
-    private FirebaseAuth auth;  //파이어 베이스 인증 객체
-    private GoogleApiClient googleApiClient;  //구글 api 클라이언트 객체\
-    private static final int fire_sign_google=100;  //구글 로그인 결과 코드
+    private SignInButton mGoogleSignButton; //구글 로그인 버튼
+    private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
+    private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체\
+    private static final int mFireSignGoogle =100;  //구글 로그인 결과 코드
 
     //kakao
-    private Button btn_custom_login;
-    private SessionCallback sessionCallback = new SessionCallback();
-    Session session;
-    FirebaseAuth firebaseAuth;
+    private Button mBtnCustomLogin;
+    private SessionCallback mSessionCallback = new SessionCallback();
+    Session mSession;
+    FirebaseAuth mFirebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         //Edittext
-        get_input_email=findViewById(R.id.inputEmail);
-        get_input_password=findViewById(R.id.inputPassword);
+        mGetInputEmail =findViewById(R.id.inputEmail);
+        mGetInputPassword =findViewById(R.id.inputPassword);
 
         //로그인 버튼
-        Button login_button=findViewById(R.id.login_button);
-        login_button.setOnClickListener(new View.OnClickListener() {
+        Button mLoginButton=findViewById(R.id.login_button);
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,SelectMode.class);
-
-                Temail=get_input_email.getText().toString();
-                Tpassword=get_input_password.getText().toString();
-
-                Log.d("get_input_email",Temail);
-                Log.d("get_input_password",Tpassword);
-
+                mEmail = mGetInputEmail.getText().toString();
+                mPassword = mGetInputPassword.getText().toString();
                 //logging in the user
-                userLogin(Temail,Tpassword);
+                userLogin(mEmail, mPassword);
             }
         });
 
@@ -107,64 +87,52 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         signup_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,SignUp.class);
-                startActivity(intent);
+                Intent mIntent=new Intent(MainActivity.this,SignUp.class);
+                startActivity(mIntent);
             }
         });
 
         //google 회원 정보를 받아옴
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions mGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        googleApiClient=new GoogleApiClient.Builder(this)
+        mGoogleApiClient =new GoogleApiClient.Builder(this)
                 .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
+                .addApi(Auth.GOOGLE_SIGN_IN_API,mGoogleSignInOptions)
                 .build();
-        auth=FirebaseAuth.getInstance();//파이어 베이스 인증 객체 초기화
+        mAuth =FirebaseAuth.getInstance();//파이어 베이스 인증 객체 초기화
 
         //google login button
-        google_sign_button=findViewById(R.id.google_sign_button);
-        google_sign_button.setOnClickListener(new View.OnClickListener() {//구글 로그인 버튼 클릭
+        mGoogleSignButton =findViewById(R.id.google_sign_button);
+        mGoogleSignButton.setOnClickListener(new View.OnClickListener() {//구글 로그인 버튼 클릭
             @Override
             public void onClick(View v) {
-                Intent intent=Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                startActivityForResult(intent,fire_sign_google);
+                Intent mIntent=Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(mIntent, mFireSignGoogle);
             }
         });
 
         //kakao login button
-        session = Session.getCurrentSession();
-        session.addCallback(sessionCallback);
-        btn_custom_login=findViewById(R.id.kakao_login);
-        btn_custom_login.setOnClickListener(new View.OnClickListener() {
+        mSession = Session.getCurrentSession();
+        mSession.addCallback(mSessionCallback);
+        mBtnCustomLogin =findViewById(R.id.kakao_login);
+        mBtnCustomLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                session.open(AuthType.KAKAO_LOGIN_ALL, MainActivity.this);
+                mSession.open(AuthType.KAKAO_LOGIN_ALL, MainActivity.this);
             }
         });
-
-        //로그아웃 하지 않고 앱을 종료 했을경우, 자동 로그인 기능
-        //google
-       if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-            Intent intent=Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-            startActivityForResult(intent,fire_sign_google);
-        }
-       //kakao
-        if(Session.getCurrentSession().isOpened()==true){
-            session.open(AuthType.KAKAO_LOGIN_ALL, MainActivity.this);
-        }
     }
 
     //firebase userLogin method
     private void userLogin(String UserEmail, String UserPassword){
-        firebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
         //logging in the user
-        firebaseAuth.signInWithEmailAndPassword(UserEmail, UserPassword)
+        mFirebaseAuth.signInWithEmailAndPassword(UserEmail, UserPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if(task.isSuccessful()) {
                             finish();
                             startActivity(new Intent(getApplicationContext(), SelectMode.class));
@@ -173,6 +141,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //로그아웃 하지 않고 앱을 종료 했을경우, 자동 로그인 기능
+        //google
+        if(GoogleSignIn.getLastSignedInAccount(this)!=null){
+            Intent mIntent=Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(mIntent, mFireSignGoogle);
+        }
+        //kakao
+        if(Session.getCurrentSession().isOpened()){
+            mSession.open(AuthType.KAKAO_LOGIN_ALL, MainActivity.this);
+        }
     }
 
     //로그인 했을 시 뒤로가기 버튼으로 다시 로그인 화면이 뜨지 않도록 하기 위해 destroy부분에서 finish필요
@@ -186,20 +169,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         // 세션 콜백 삭제
-        Session.getCurrentSession().removeCallback(sessionCallback);
+        Session.getCurrentSession().removeCallback(mSessionCallback);
     }
 
     @Override
     protected  void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) { //로그인 인증을 요청 했을 때 결과값을 돌려 받는 곳
         super.onActivityResult(requestCode, resultCode, data);
         //google
-        if(requestCode==fire_sign_google){
-            GoogleSignInResult result=Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess()){//인증이 성공적이면 ==true
-                GoogleSignInAccount account=result.getSignInAccount();//account라는 데이터는 구글정보를 담고있다. 프로필, 이름, ...
-                resultLogin(account); //로그인 결과 값 출력 수행하라는 메소드
+        if(requestCode== mFireSignGoogle){
+            GoogleSignInResult mResult=Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if(mResult.isSuccess()){//인증이 성공적이면 ==true
+                GoogleSignInAccount mAccount=mResult.getSignInAccount();//account라는 데이터는 구글정보를 담고있다. 프로필, 이름, ...
+                resultLogin(mAccount); //로그인 결과 값 출력 수행하라는 메소드
             }
         }
 
@@ -212,16 +194,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     // (google)onActivityResult에서 인증이 끝났으면 최종적 로그인 수행하는 메소드
     private void resultLogin(final GoogleSignInAccount account) {
         AuthCredential credential= GoogleAuthProvider.getCredential(account.getIdToken(),null);
-        auth.signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){  //로그인 성공
                             Toast.makeText(MainActivity.this,"로그인 성공",Toast.LENGTH_SHORT).show();
-                            Intent intent=new Intent(getApplicationContext(), SelectMode.class);
-                            intent.putExtra("name",account.getDisplayName());
-                            intent.putExtra("photoUrl",String.valueOf(account.getPhotoUrl()));
-                            startActivity(intent);
+                            Intent mIntent=new Intent(getApplicationContext(), SelectMode.class);
+                            mIntent.putExtra("name",account.getDisplayName());
+                            mIntent.putExtra("photoUrl",String.valueOf(account.getPhotoUrl()));
+                            startActivity(mIntent);
                         }
                         else{  //로그인 실패
                             Toast.makeText(MainActivity.this,"로그인 실패",Toast.LENGTH_SHORT).show();
@@ -302,12 +284,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 }
 
                                 // 프로필
-                                Profile profile = kakaoAccount.getProfile();
+                                Profile mProfile = kakaoAccount.getProfile();
 
-                                if (profile != null) {
-                                    Log.d("KAKAO_API", "nickname: " + profile.getNickname());
-                                    Log.d("KAKAO_API", "profile image: " + profile.getProfileImageUrl());
-                                    Log.d("KAKAO_API", "thumbnail image: " + profile.getThumbnailImageUrl());
+                                if (mProfile != null) {
+                                    Log.d("KAKAO_API", "nickname: " + mProfile.getNickname());
+                                    Log.d("KAKAO_API", "profile image: " + mProfile.getProfileImageUrl());
+                                    Log.d("KAKAO_API", "thumbnail image: " + mProfile.getThumbnailImageUrl());
 
                                 } else if (kakaoAccount.profileNeedsAgreement() == OptionalBoolean.TRUE) {
                                     // 동의 요청 후 프로필 정보 획득 가능
@@ -317,11 +299,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 }
                             }
 
-                            Intent intent=new Intent(getApplicationContext(),SelectMode.class);
-                            Profile profile = kakaoAccount.getProfile();
-                            intent.putExtra("name",profile.getNickname());
-                            intent.putExtra("photoUrl",profile.getProfileImageUrl());
-                            startActivity(intent);
+                            Intent mIntent=new Intent(getApplicationContext(),SelectMode.class);
+                            Profile mProfile = kakaoAccount.getProfile();
+                            mIntent.putExtra("name",mProfile.getNickname());
+                            mIntent.putExtra("photoUrl",mProfile.getProfileImageUrl());
+                            startActivity(mIntent);
                         }
                     });
         }

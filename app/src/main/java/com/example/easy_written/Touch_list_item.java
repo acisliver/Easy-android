@@ -11,15 +11,15 @@ public class Touch_list_item extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview_list);
 
-        LinearLayout list_item=(LinearLayout)findViewById(R.id.Linear_list_item);
+        LinearLayout mListItem=(LinearLayout)findViewById(R.id.Linear_list_item);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
                     case R.id.list_item:
-                        Intent intent=new Intent(Touch_list_item.this,KeywordTime.class);
-                        startActivity(intent);
+                        Intent mIntent=new Intent(Touch_list_item.this,KeywordTime.class);
+                        startActivity(mIntent);
                 }
             }
 

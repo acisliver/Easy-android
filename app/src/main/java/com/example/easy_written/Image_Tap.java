@@ -31,15 +31,14 @@ import java.util.ArrayList;
 
 public class Image_Tap extends Fragment {
     private View mView;
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
     private TextView mTextView;
-    private String mImageTT;
+    private Animator mCurrentAnimator;
+    private ScrollView mScroll;
+    private String mImageTT,mImageTT2;
+    private int mShortAnimationDuration;
     private ArrayList<String> mImagePtahArrayList;
     private ArrayList<ImageView> mImageViewArrayList;
-    private ScrollView mScroll;
-    private String mImageTT2;
-
+    
     public static Image_Tap newInstance(){
         Image_Tap mImageTap=new Image_Tap();
         return mImageTap;
@@ -58,7 +57,8 @@ public class Image_Tap extends Fragment {
         mImageTT2=mImageTT+"/"+"STTtext.txt";
 
         //setText
-        mTextView.setText(mImageTT2);
+        Highlighting mHighlighting=new Highlighting();
+        mTextView.setText(mHighlighting.ReadTextFile(mImageTT2));
 
         //imagelist
         mImagePtahArrayList=new ArrayList<>();
@@ -274,25 +274,6 @@ public class Image_Tap extends Fragment {
         params.leftMargin=10;
         params.rightMargin=10;
         return params;
-    }
-
-    //text파일 읽기 keyword에도 존재.
-    private String ReadTextFile(String path){
-        StringBuffer mStrBuffer = new StringBuffer();
-        try{
-            InputStream mIs = new FileInputStream(path);
-            BufferedReader mReader = new BufferedReader(new InputStreamReader(mIs));
-            String line="";
-            while((line=mReader.readLine())!=null){
-                mStrBuffer.append(line+"\n");
-            }
-            mReader.close();
-            mIs.close();
-        }catch (IOException e){
-            e.printStackTrace();
-            return "";
-        }
-        return mStrBuffer.toString();
     }
 
     //image클릭시

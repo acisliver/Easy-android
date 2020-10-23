@@ -18,8 +18,7 @@ public class Image_MainAdpater extends AppCompatActivity {
     public String counter(){
         return mS;
     }
-    public String Imagecounter(){ return mD;
-    }
+    public String Imagecounter(){ return mD; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

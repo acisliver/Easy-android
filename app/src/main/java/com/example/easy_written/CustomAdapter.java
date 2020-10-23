@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>{
-
     private ArrayList<File_Data> mList;
     private int mModifyFlag=0; //하단바 표시여부에 따라 체크박스 표시 flag
 

@@ -29,8 +29,7 @@ public class FileView extends AppCompatActivity  {
     ArrayList<String> filesNameList = new ArrayList<>();
     ArrayList<String> filesDateList = new ArrayList<>();
     ArrayList<File_Data> mVariable = new ArrayList<>();
-    File[] files;
-    //고대은
+    private File[] files;
     private int modify_flag;
     private int checked;
 
@@ -42,7 +41,6 @@ public class FileView extends AppCompatActivity  {
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        //고대은
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         modify_flag = 0;
 
@@ -98,8 +96,6 @@ public class FileView extends AppCompatActivity  {
             }
         }));
 
-
-        //고대은
         //bottomnavigationview의 아이콘을 선택 했을때 기능 설정
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -223,7 +219,6 @@ public class FileView extends AppCompatActivity  {
         }
     }
 
-    //고대은
     //하단 바 표시 여부 modify_flag=0 Gone, modify_flag=1 Visible
     public void handleBottomNavVisible(int modify_flag) {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
