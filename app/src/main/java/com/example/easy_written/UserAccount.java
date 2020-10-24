@@ -6,8 +6,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,16 +21,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kakao.auth.Session;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
+
 
 public class UserAccount extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private TextView mUserId;
@@ -41,7 +38,6 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
     private String mName, mEmail, mImage;
     private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
     private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +46,9 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
 
         mUserId =findViewById(R.id.user_id);
         mUserProfile =findViewById(R.id.user_profile);
-
-        Intent getintent=getIntent();
-        mName =getintent.getStringExtra("name");
-        mImage =getintent.getStringExtra("photoUrl");
+        Intent mGetintent=getIntent();
+        mName =mGetintent.getStringExtra("name");
+        mImage =mGetintent.getStringExtra("photoUrl");
 
         //구글로 로그인 했을 시
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
@@ -82,10 +77,8 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
             else
                 Glide.with(this).load(R.drawable.easyicon2).into(mUserProfile);
         }
-
         //회원가입후 로그인 했을 시
         else{
-            //이름 넣어 줘야 함
             Glide.with(this).load(R.drawable.easyicon2).into(mUserProfile);
         }
 
@@ -125,8 +118,11 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
                 //로그아웃
                 else if(mId == R.id.logout){
                     //google 아이디로 로그인 했을 경우
-                    if(GoogleSignIn.getLastSignedInAccount(context)!=null){
-                        GoogleLogout();
+                    if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                        if(mGoogleApiClient!=null&&mGoogleApiClient.isConnected())
+                            GoogleLogout();
+                        else
+                            mAuth.getInstance().signOut();
                         finish();
                     }
 
@@ -200,6 +196,5 @@ public class UserAccount extends AppCompatActivity implements GoogleApiClient.On
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 }

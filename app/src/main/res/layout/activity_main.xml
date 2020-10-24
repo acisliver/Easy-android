@@ -30,7 +30,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="ID"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:lines = "1"
+                android:singleLine = "true">
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -44,7 +46,9 @@
                 android:layout_height="wrap_content"
                 android:hint="PASSWORD"
                 android:password="true"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:lines = "1"
+                android:singleLine = "true">
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>

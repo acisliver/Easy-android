@@ -28,10 +28,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.kakao.auth.AuthType;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
@@ -51,15 +47,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String mEmail, mPassword;
 
     private SignInButton mGoogleSignButton; //구글 로그인 버튼
-    private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
+    private FirebaseAuth mAuth;  //구글 파이어 베이스 인증 객체
     private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체\
     private static final int mFireSignGoogle =100;  //구글 로그인 결과 코드
+    private FirebaseAuth mFirebaseAuth;
 
     //kakao
     private Button mBtnCustomLogin;
     private SessionCallback mSessionCallback = new SessionCallback();
-    Session mSession;
-    FirebaseAuth mFirebaseAuth;
+    private Session mSession;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mEmail = mGetInputEmail.getText().toString();
                 mPassword = mGetInputPassword.getText().toString();
                 //logging in the user
-                userLogin(mEmail, mPassword);
+                UserLogin(mEmail, mPassword);
             }
         });
 
@@ -126,10 +123,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     //firebase userLogin method
-    private void userLogin(String UserEmail, String UserPassword){
-        mFirebaseAuth = FirebaseAuth.getInstance();
+    private void UserLogin(String UserEmail, String UserPassword){
+        mAuth = FirebaseAuth.getInstance();
         //logging in the user
-        mFirebaseAuth.signInWithEmailAndPassword(UserEmail, UserPassword)
+        mAuth.signInWithEmailAndPassword(UserEmail, UserPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +34,8 @@ import com.kakao.usermgmt.callback.LogoutResponseCallback;
 public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
     private DrawerLayout mDrawerLayout;
     private String mPhotoUrl, mName;
-    private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
+    private FirebaseAuth mGoogleAuth;  //파이어 베이스 인증 객체
+    private FirebaseAuth mFireAuth;
     private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체\
 
     @Override
@@ -87,16 +89,24 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
 
                 //로그아웃
                 else if(id == R.id.logout){
-                    //google 아이디로 로그인 했을 경우
+                    //회원 또는 google 아이디로 로그인 했을 경우
                     if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                        GoogleLogout();
+                        //구글 로그인 했을 경우
+                        if(mGoogleApiClient!=null && mGoogleApiClient.isConnected())
+                            GoogleLogout();
+                        //회원으로 로그인 했을 경우
+                        else
+                            FirebaseAuth.getInstance().signOut();
+
                         finish();
                     }
 
                     //kakao 아이디로 로그인 했을 경우
-                    if(Session.getCurrentSession().isOpened()){
+                    else if(Session.getCurrentSession().isOpened()){
                         KakaoLogout();
                         finish();
+                    }
+                    else{
                     }
                     Intent mIntent=new Intent(getApplicationContext(),MainActivity.class);
                     startActivity(mIntent);
@@ -134,7 +144,7 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
                     .enableAutoManage(this,this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
                     .build();
-            mAuth =FirebaseAuth.getInstance();
+            mGoogleAuth =FirebaseAuth.getInstance();
         }
     }
 
@@ -155,7 +165,7 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
         mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle bundle) {
-                mAuth.signOut();
+                mGoogleAuth.signOut();
                 if(mGoogleApiClient.isConnected()){
                     Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                         @Override
