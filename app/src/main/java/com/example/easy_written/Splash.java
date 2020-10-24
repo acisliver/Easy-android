@@ -1,5 +1,6 @@
 package com.example.easy_written;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -124,11 +127,6 @@ public class Splash extends AppCompatActivity {
             return new String[0];
         } else {
             return mPermissions.clone();
-        }
-        if (permissions == null) {
-            return new String[0];
-        } else {
-            return permissions.clone();
         }
     }
 

@@ -6,39 +6,23 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.kakao.auth.Session;
-import com.kakao.usermgmt.UserManagement;
-import com.kakao.usermgmt.callback.LogoutResponseCallback;
 
 public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
     private DrawerLayout mDrawerLayout;
     private String mPhotoUrl, mName;
-    private FirebaseAuth mGoogleAuth;  //파이어 베이스 인증 객체
-    private FirebaseAuth mFireAuth;
-    private GoogleApiClient mGoogleApiClient;  //구글 api 클라이언트 객체\
+    private FirebaseAuth mAuth;  //파이어 베이스 인증 객체
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,27 +74,11 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
                 }
 
                 //로그아웃
-                else if(id == R.id.logout){
+                else if(id == R.id.logout) {
                     //회원 또는 google 아이디로 로그인 했을 경우
-                    if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                        //구글 로그인 했을 경우
-                        if(mGoogleApiClient!=null && mGoogleApiClient.isConnected())
-                            GoogleLogout();
-                        //회원으로 로그인 했을 경우
-                        else
-                            FirebaseAuth.getInstance().signOut();
-
-                        finish();
-                    }
-
-                    //kakao 아이디로 로그인 했을 경우
-                    else if(Session.getCurrentSession().isOpened()){
-                        KakaoLogout();
-                        finish();
-                    }
-                    else{
-                    }
-                    Intent mIntent=new Intent(getApplicationContext(),MainActivity.class);
+                    mAuth.getInstance().signOut();
+                    finish();
+                    Intent mIntent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(mIntent);
                 }
                 return true;
@@ -135,19 +103,6 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
                 startActivity(mIntent);
             }
         });
-
-        GoogleSignInAccount mAcct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-        if (mAcct != null) {
-            GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build();
-            mGoogleApiClient =new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this,this)
-                    .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
-                    .build();
-            mGoogleAuth =FirebaseAuth.getInstance();
-        }
     }
 
     @Override
@@ -161,132 +116,14 @@ public class SelectMode extends AppCompatActivity implements GoogleApiClient.OnC
         return super.onOptionsItemSelected(item);
     }
 
-    //google 로그아웃
-   private void GoogleLogout() {
-        mGoogleApiClient.connect();
-        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-            @Override
-            public void onConnected(@Nullable Bundle bundle) {
-                mGoogleAuth.signOut();
-                if(mGoogleApiClient.isConnected()){
-                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
-                            if(status.isSuccess()){
-                                setResult(1);
-                            }else{
-                                setResult(0);
-                            }
-                            finish();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onConnectionSuspended(int i) {
-                setResult(-1);
-                finish();
-
-            }
-        });
-
-        //google
-
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        googleApiClient=new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
-                .build();
-
-        auth=FirebaseAuth.getInstance();//파이어 베이스 인증 객체 초기화
-
-    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        //google 아이디로 로그인 했을 경우
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null)
-            google_logout();
-
-        //kakao 아이디로 로그인 했을 경우
-        if(Session.getCurrentSession().isOpened()==true)
-            kakao_logout();
-
-    }
-
-
-    //google 로그아웃
-    private void google_logout() {
-        googleApiClient.connect();
-        googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-            @Override
-            public void onConnected(@Nullable Bundle bundle) {
-                auth.signOut();
-                if(googleApiClient.isConnected()){
-                    Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
-                            if(status.isSuccess()){
-                                Toast.makeText(SelectMode.this,"로그아웃 성공",Toast.LENGTH_SHORT).show();
-                                setResult(1);
-                            }else{
-                                Toast.makeText(SelectMode.this,"로그아웃 실패",Toast.LENGTH_SHORT).show();
-                                setResult(0);
-                            }
-                            finish();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onConnectionSuspended(int i) {
-                setResult(-1);
-                finish();
-
-            }
-        });
-    }
-
-    private void kakao_logout(){
-        UserManagement.getInstance()
-                .requestLogout(new LogoutResponseCallback() {
-                    @Override
-                    public void onCompleteLogout() {
-                        Toast.makeText(SelectMode.this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
-                        Log.d("kakao 로그아웃","ok");
-                    }
-
-                });
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
-
-    private void KakaoLogout(){
-        UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
-            @Override
-            public void onCompleteLogout() {
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 }

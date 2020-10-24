@@ -79,24 +79,23 @@
          />
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/visitorAccount"
+            android:text="방문자로 들어가기"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/custom_signup_button"
+            android:textColor="#ffffff"
+            />
 
-    <com.google.android.gms.common.SignInButton
-        android:layout_marginTop="20dp"
-        android:id="@+id/google_sign_button"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center">
-    </com.google.android.gms.common.SignInButton>
-
-    <Button
-        android:id="@+id/kakao_login"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/kakao_login_large_narrow" />
-
+    </LinearLayout>
 
 
 </LinearLayout>
