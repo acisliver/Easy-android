@@ -2,7 +2,6 @@ package com.example.easy_written;
 
 import android.app.Application;
 import android.content.Context;
-
 import com.kakao.auth.ApprovalType;
 import com.kakao.auth.AuthType;
 import com.kakao.auth.IApplicationConfig;
@@ -10,23 +9,23 @@ import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
 
-
+//kakao로그인에 필요!
 public class GlobalApplication extends Application {
-    private static GlobalApplication instance;
+    private static GlobalApplication mInstance;
 
     public static GlobalApplication getGlobalApplicationContext() {
-        if (instance == null) {
+        if (mInstance == null) {
             throw new IllegalStateException("This Application does not inherit com.kakao.GlobalApplication");
         }
 
-        return instance;
+        return mInstance;
+
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
-
+        mInstance = this;
         // Kakao Sdk 초기화
         KakaoSDK.init(new KakaoSDKAdapter());
     }
@@ -34,7 +33,7 @@ public class GlobalApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        instance = null;
+        mInstance = null;
     }
 
     public class KakaoSDKAdapter extends KakaoAdapter {

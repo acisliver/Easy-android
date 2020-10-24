@@ -1,16 +1,13 @@
 package com.example.easy_written;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,31 +15,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.JsonReader;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
 import com.microsoft.cognitiveservices.speech.CancellationReason;
 import com.microsoft.cognitiveservices.speech.ResultReason;
 import com.microsoft.cognitiveservices.speech.SpeechConfig;
-import com.microsoft.cognitiveservices.speech.SpeechRecognitionResult;
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,217 +37,174 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Future;
-
-
 import static android.os.Environment.DIRECTORY_PICTURES;
-import static com.example.easy_written.MediaScanner.*;
-
 
 public class CV_record extends AppCompatActivity {
     //사진
-    private static final int REQUEST_IMAGE_CAPTURE = 672;
-    private String imageFilePath;
-    private Uri photoUri;
-    private ImageView btn_capture;
+    private static final int mREQUESTIMAGECAPTURE = 672;
+    private String mImageFilePath;
+    private Uri mPhotoUri;
+    private ImageView mBtnCapture;
     private MediaScanner mMediaScanner; // 사진 저장 시 갤러리 폴더에 바로 반영사항을 업데이트 시켜주려면 이 것이 필요하다(미디어 스캐닝)
-    private ImageView PlayandSaveButton;
-    private ArrayList<String> PicturePathList;
+    private ImageView mPlayandSaveButton;
+    private ArrayList<String> mPicturePathList;
 
     //오디오
-    ImageView StartAndStopButton;
-    String AudiopathSave="";
-    MediaRecorder mediaRecorder;
-    final int REQUEST_AUDIO_PEMISSION_CODE=1000;
-    int StartAndStopCheck=1;
-    EditText SaveFileName;
+    ImageView mStartAndStopButton;
+    String mAudiopathSave="";
+    MediaRecorder mMediaRecorder;
+    int mStartAndStopCheck=1;
+    EditText mSaveFileName;
 
     //STT
-    private static final String SPEECHSUBSCRIPTIONKEY = "98ce7d7369024192aa438ba812b249c5";
-    private static final String  SERVICEREGION= "koreacentral";
-    private String saved_text = "";
-    private SpeechRecognizer reco;
-    private boolean continuousListeningStarted = false;
-
-
-    //기타
-    private Spinner spinner2;
-    ArrayList<String> arrayList;
-    ArrayAdapter<String> arrayAdapter;
+    private static final String mSPEECHSUBSCRIPTIONKEY = "98ce7d7369024192aa438ba812b249c5";
+    private static final String  mSERVICEREGION= "koreacentral";
+    private String mSavedText = "";
+    private SpeechRecognizer mReco;
+    private boolean mContinuousListeningStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_c_v_record);
 
-        int requestCode = 5;//STT permission request code
-
-        PicturePathList=new ArrayList<>();
-
-        //배속 설정
-        arrayList = new ArrayList<>();
-        arrayList.add("1.0배속");
-        arrayList.add("1.2배속");
-        arrayList.add("1.5배속");
-        arrayList.add("1.7배속");
-        arrayList.add("2.0배속");
-
-        arrayAdapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                arrayList);
-
-        spinner2 = (Spinner)findViewById(R.id.spinner2);
-        spinner2.setAdapter(arrayAdapter);
+        int mRequestCode = 5;//STT permission request code
+        mPicturePathList=new ArrayList<>();
 
         //오디오
-        StartAndStopButton = findViewById(R.id.StartAndStopButton);
-        StartAndStopButton.setOnClickListener(new View.OnClickListener() {
+        mStartAndStopButton = findViewById(R.id.StartAndStopButton);
+        mStartAndStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayAndStop playAndStop=new PlayAndStop();
-                playAndStop.execute();
+                PlayAndStop mPlayAndStop=new PlayAndStop();
+                mPlayAndStop.execute();
                 onSpeechButtonClicked();
             }
         });
 
         //종료버튼
-        PlayandSaveButton=findViewById(R.id.PlayandSaveButton);
-        PlayandSaveButton.setOnClickListener(new View.OnClickListener() {
+        mPlayandSaveButton=findViewById(R.id.PlayandSaveButton);
+        mPlayandSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaRecorder.stop();
-                mediaRecorder.release();
+                mMediaRecorder.stop();
+                mMediaRecorder.release();
 
+                AlertDialog.Builder mAlert = new AlertDialog.Builder(CV_record.this);
+                mAlert.setMessage("파일이름");
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(CV_record.this);
-                alert.setMessage("파일이름");
+                mSaveFileName=new EditText(CV_record.this);
+                mAlert.setView(mSaveFileName);
 
-                SaveFileName=new EditText(CV_record.this);
-                alert.setView(SaveFileName);
-
-                alert.setPositiveButton("저장", new DialogInterface.OnClickListener() {
+                mAlert.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CheckTypesTask typesTask=new CheckTypesTask();
-                        String Passtext=SaveFileName.getText().toString();
-                        typesTask.execute(Passtext);
+                        CheckTypesTask mTypesTask=new CheckTypesTask();
+                        String mPasstext=mSaveFileName.getText().toString();
+                        mTypesTask.execute(mPasstext);
                     }
                 });
 
-                alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                mAlert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(),"저장을 취소 했습니다.",Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                alert.show();
-
-                Message msg=new Message();
-                msg.obj=SaveFileName.getText();
+                mAlert.show();
+                Message mMsg=new Message();
+                mMsg.obj=mSaveFileName.getText();
             }
         });
 
 
         // 사진 저장 후 미디어 스캐닝을 돌려줘야 갤러리에 반영됨.
         mMediaScanner = MediaScanner.getInstance(getApplicationContext());
-
-        btn_capture=findViewById(R.id.btn_capture);
-        btn_capture.setOnClickListener(new View.OnClickListener() {
+        mBtnCapture=findViewById(R.id.btnCapture);
+        mBtnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    File photoFile = null;
+                Intent mIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (mIntent.resolveActivity(getPackageManager()) != null) {
+                    File mPhotoFile = null;
                     try {
-                        photoFile = createImageFile();
+                        mPhotoFile = createImageFile();
                     } catch (IOException e) {
-
                     }
-                    if (photoFile != null) {
-                        photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                    if (mPhotoFile != null) {
+                        mPhotoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), mPhotoFile);
+                        mIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
+                        startActivityForResult(mIntent, mREQUESTIMAGECAPTURE);
                     }
                 }
             }
         });
     }
     public void onSpeechButtonClicked(){
-        TextView txt = (TextView)findViewById(R.id.RecordText);
+        TextView mTxt = (TextView)findViewById(R.id.RecordText);
 
-        if (continuousListeningStarted) {
-            if (reco != null) {
-                final Future<Void> task = reco.stopContinuousRecognitionAsync();
+        if (mContinuousListeningStarted) {
+            if (mReco != null) {
+                final Future<Void> task = mReco.stopContinuousRecognitionAsync();
                 //재생 버튼으로 바꿈
-                StartAndStopButton.setImageDrawable(getResources().
+                mStartAndStopButton.setImageDrawable(getResources().
                         getDrawable(R.drawable.ic_baseline_play_circle_filled_24, getApplicationContext().getTheme()));
 //                //카메라, 저장 버튼 생성
-//                btn_capture.setVisibility(View.VISIBLE);
-//                PlayandSaveButton.setVisibility(View.VISIBLE);
+//                mBtnCapture.setVisibility(View.VISIBLE);
+//                mPlayandSaveButton.setVisibility(View.VISIBLE);
             } else {
-                continuousListeningStarted = false;
+                mContinuousListeningStarted = false;
             }
-            continuousListeningStarted = false;
-
+            mContinuousListeningStarted = false;
             return;
         }
 
         try {
-            SpeechConfig config = SpeechConfig.fromSubscription(SPEECHSUBSCRIPTIONKEY, SERVICEREGION);
-            config.setSpeechRecognitionLanguage("ko-KR");
-            assert (config!=null);
-
-            reco = new SpeechRecognizer(config);
-            assert (reco!=null);
-
-
-            reco.recognizing.addEventListener((s, e) -> {
+            SpeechConfig mConfig = SpeechConfig.fromSubscription(mSPEECHSUBSCRIPTIONKEY, mSERVICEREGION);
+            mConfig.setSpeechRecognitionLanguage("ko-KR");
+            assert (mConfig!=null);
+            mReco = new SpeechRecognizer(mConfig);
+            assert (mReco!=null);
+            mReco.recognizing.addEventListener((s, e) -> {
                 if(e.getResult().getReason()==ResultReason.RecognizingSpeech){
-                    txt.setText("" + saved_text+e.getResult().getText());
+                    mTxt.setText("" + mSavedText+e.getResult().getText());
                 }
-
             });
-            reco.recognized.addEventListener((s, e) -> {
+            mReco.recognized.addEventListener((s, e) -> {
                 if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
-                    saved_text=saved_text+ e.getResult().getText();
-                    txt.setText("" + saved_text);
+                    mSavedText=mSavedText+ e.getResult().getText();
+                    mTxt.setText("" + mSavedText);
                 }
                 else if (e.getResult().getReason() == ResultReason.NoMatch) {
                     System.out.println("NOMATCH: Speech could not be recognized.");
                 }
             });
-
-            reco.canceled.addEventListener((s, e) -> {
+            mReco.canceled.addEventListener((s, e) -> {
                 System.out.println("CANCELED: Reason=" + e.getReason());
-
                 if (e.getReason() == CancellationReason.Error) {
                     System.out.println("CANCELED: ErrorCode=" + e.getErrorCode());
                     System.out.println("CANCELED: ErrorDetails=" + e.getErrorDetails());
                     System.out.println("CANCELED: Did you update the subscription info?");
                 }
-
             });
-
-            reco.sessionStopped.addEventListener((s, e) -> {
+            mReco.sessionStopped.addEventListener((s, e) -> {
                 System.out.println("\n    Session stopped event.");
             });
-            final Future<Void> task = reco.startContinuousRecognitionAsync();
-            assert(task != null);
-            continuousListeningStarted = true;
+            final Future<Void> mTask = mReco.startContinuousRecognitionAsync();
+            assert(mTask != null);
+            mContinuousListeningStarted = true;
             CV_record.this.runOnUiThread(() -> {
                 //일시정지 버튼으로 바꿈
-                StartAndStopButton.setImageDrawable(getResources().
+                mStartAndStopButton.setImageDrawable(getResources().
                         getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getApplicationContext().getTheme()));
-                StartAndStopButton.setEnabled(true);
+                mStartAndStopButton.setEnabled(true);
                 //카메라, 저장 버튼 생성
-                btn_capture.setVisibility(View.VISIBLE);
-                PlayandSaveButton.setVisibility(View.VISIBLE);
+                mBtnCapture.setVisibility(View.VISIBLE);
+                mPlayandSaveButton.setVisibility(View.VISIBLE);
             });
-
-            Log.i("stop","stop");
-            reco.close();
+            mReco.close();
         } catch (Exception ex) {
-            Log.e("SpeechSDKDemo", "unexpected " + ex.getMessage());
             assert(false);
         }
     }
@@ -272,22 +212,19 @@ public class CV_record extends AppCompatActivity {
 
     //스피닝 쓰레드
     private class CheckTypesTask extends AsyncTask<String,Void,Void> {
-
-        ProgressDialog asyncDialog=new ProgressDialog(CV_record.this);
-
+        ProgressDialog mAsyncDialog=new ProgressDialog(CV_record.this);
         @Override
         protected void onPreExecute() {
-            asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            asyncDialog.setMessage("파일을 저장하고 있습니다.");
-            asyncDialog.show();
+            mAsyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mAsyncDialog.setMessage("파일을 저장하고 있습니다.");
+            mAsyncDialog.show();
             super.onPreExecute();
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
             Toast.makeText(getApplicationContext(),"저장완료!!",Toast.LENGTH_SHORT).show();
-            asyncDialog.dismiss();
+            mAsyncDialog.dismiss();
             onBackPressed();
             super.onPostExecute(aVoid);
         }
@@ -295,42 +232,41 @@ public class CV_record extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... ReceivedFileName) {
             //저장시킬 파일 만들기
-            String ReceivedFileNameToString=ReceivedFileName[0];
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
-            Date curDate   = new Date(System.currentTimeMillis());
-            String fileDate  = formatter.format(curDate);
-            String CreateFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ ReceivedFileNameToString+"#"+fileDate;
-            File file=new File(CreateFilePath);
-            if(!file.exists())
-                file.mkdirs();
+            String mReceivedFileNameToString=ReceivedFileName[0];
+            SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
+            Date mCurDate   = new Date(System.currentTimeMillis());
+            String mFileDate  = mFormatter.format(mCurDate);
+            String mCreateFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ mReceivedFileNameToString+"#"+mFileDate;
+            File mFile=new File(mCreateFilePath);
+            if(!mFile.exists())
+                mFile.mkdirs();
 
             //저장시킬 파일로 오디오 경로 변경
-            String NewpathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+ReceivedFileNameToString+"#"+fileDate+ "/"+"_audio_record"+".3gp";
-            renameFile(AudiopathSave,NewpathSave);
+            String mNewpathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+mReceivedFileNameToString+"#"+mFileDate+ "/"+"_audio_record"+".3gp";
+            RenameFile(mAudiopathSave,mNewpathSave);
 
             //사진 경로 변경
-            for(int k=0;k<PicturePathList.size();k++){
-                String[] StringSplit=(PicturePathList.get(k)).split("#");
-                String Movepath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+ReceivedFileNameToString+"#"+fileDate+"/"+"#"+StringSplit[1];
-                renameFile(PicturePathList.get(k),Movepath);
+            for(int k=0;k<mPicturePathList.size();k++){
+                String[] mStringSplit=(mPicturePathList.get(k)).split("#");
+                String mMovepath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+mReceivedFileNameToString+"#"+mFileDate+"/"+"#"+mStringSplit[1];
+                RenameFile(mPicturePathList.get(k),mMovepath);
             }
 
             //STT텍스트 저장
-            FileOutputStream fos = null;
+            FileOutputStream mFos = null;
             try {
-                fos = new FileOutputStream(CreateFilePath+"/"+"STTtext.txt", true);
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
-                writer.write(saved_text);
-                writer.flush();
-                writer.close();
-                fos.close();
+                mFos = new FileOutputStream(mCreateFilePath+"/"+"STTtext.txt", true);
+                BufferedWriter mWriter = new BufferedWriter(new OutputStreamWriter(mFos));
+                mWriter.write(mSavedText);
+                mWriter.flush();
+                mWriter.close();
+                mFos.close();
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
             publishProgress();
-
             return null;
         }
         @Override
@@ -340,84 +276,81 @@ public class CV_record extends AppCompatActivity {
     }
 
     private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "TEST_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
+        String mTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String mImageFileName = "TEST_" + mTimeStamp + "_";
+        File mStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File mImage = File.createTempFile(
+                mImageFileName,
                 ".jpg",
-                storageDir
+                mStorageDir
         );
-        imageFilePath = image.getAbsolutePath();
-        return image;
+        mImageFilePath = mImage.getAbsolutePath();
+        return mImage;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+        if (requestCode == mREQUESTIMAGECAPTURE && resultCode == RESULT_OK) {
+            Bitmap mBitmap = BitmapFactory.decodeFile(mImageFilePath);
             ExifInterface exif = null;
 
             try {
-                exif = new ExifInterface(imageFilePath);
+                exif = new ExifInterface(mImageFilePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            int exifOrientation;
-            int exifDegree;
+            int mExifOrientation;
+            int mExifDegree;
 
             if (exif != null) {
-                exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                exifDegree = exifOrientationToDegress(exifOrientation);
+                mExifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                mExifDegree = exifOrientationToDegress(mExifOrientation);
             } else {
-                exifDegree = 0;
+                mExifDegree = 0;
             }
 
-            String result = "";
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
-            Date curDate   = new Date(System.currentTimeMillis());
-            String PictureDate  = formatter.format(curDate);
+            String mResult = "";
+            SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
+            Date mCurDate   = new Date(System.currentTimeMillis());
+            String mPictureDate  = mFormatter.format(mCurDate);
+            String mStrFolderName = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES) + "/" + "EASYWRITTENPICTURE";
+            File mFile = new File(mStrFolderName);
+            if( !mFile.exists() )
+                mFile.mkdirs();
 
-            String strFolderName = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES) + "/" + "EASYWRITTENPICTURE";
-            File file = new File(strFolderName);
-            if( !file.exists() )
-                file.mkdirs();
+            File mF = new File(mStrFolderName + "/" + "#" +mPictureDate + ".png");
+            mPicturePathList.add(mF.getPath());
 
-            File f = new File(strFolderName + "/" + "#" +PictureDate + ".png");
-            //result=f.getPath()
-            PicturePathList.add(f.getPath());
-
-            FileOutputStream fOut=null;
+            FileOutputStream mFOut=null;
             try {
-                fOut = new FileOutputStream(f);
+                mFOut = new FileOutputStream(mF);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                result = "Save Error fOut";
+                mResult = "Save Error mFOut";
             }
 
             // 비트맵 사진 폴더 경로에 저장
-            rotate(bitmap,exifDegree).compress(Bitmap.CompressFormat.PNG, 70, fOut);
+            rotate(mBitmap,mExifDegree).compress(Bitmap.CompressFormat.PNG, 70, mFOut);
 
             try {
-                fOut.flush();
+                mFOut.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                fOut.close();
+                mFOut.close();
                 // 방금 저장된 사진을 갤러리 폴더 반영 및 최신화
-                mMediaScanner.mediaScanning(strFolderName + "/" + PictureDate + ".png");
+                mMediaScanner.mediaScanning(mStrFolderName + "/" + mPictureDate + ".png");
             } catch (IOException e) {
                 e.printStackTrace();
-                result = "File close Error";
+                mResult = "File close Error";
             }
 
         }
     }
-
 
     private int exifOrientationToDegress(int exifOrientation) {
         if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
@@ -431,59 +364,54 @@ public class CV_record extends AppCompatActivity {
     }
 
     private Bitmap rotate(Bitmap bitmap, float degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        Matrix mMatrix = new Matrix();
+        mMatrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);
     }
 
     //녹음
     private void setupMediaRecorder() {
-        mediaRecorder=new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-
-        mediaRecorder.setOutputFile(AudiopathSave);
+        mMediaRecorder=new MediaRecorder();
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mMediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mMediaRecorder.setOutputFile(mAudiopathSave);
     }
 
     public class PlayAndStop extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            if (StartAndStopCheck == 1) {
-                    AudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ "_audio_record"+".3gp";
+            if (mStartAndStopCheck == 1) {
+                    mAudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+ "_audio_record"+".3gp";
                     setupMediaRecorder();
                     try {
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
+                        mMediaRecorder.prepare();
+                        mMediaRecorder.start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     catch (IllegalStateException e){
                         e.printStackTrace();
                     }
-                StartAndStopCheck=0;
+                mStartAndStopCheck=0;
             }
-            else if(StartAndStopCheck==0){
+            else if(mStartAndStopCheck==0){
                 try {
-                    mediaRecorder.pause();
-                    StartAndStopCheck=1;
+                    mMediaRecorder.pause();
+                    mStartAndStopCheck=1;
                 }
                 catch (IllegalStateException e){
                     e.printStackTrace();
                 }
-
             }
             return null;
         }
     }
 
-    public void renameFile(String filename, String newFilename) {
-        File file = new File( filename );
-        File fileNew = new File( newFilename );
-        if( file.exists() ) file.renameTo( fileNew );
+    public void RenameFile(String filename, String newFilename) {
+        File mFile = new File( filename );
+        File mFileNew = new File( newFilename );
+        if( mFile.exists() ) mFile.renameTo( mFileNew );
     }
-
-
-    //실행/정지 버튼 클릭 시 STT
-
 }
+

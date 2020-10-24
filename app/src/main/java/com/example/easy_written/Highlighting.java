@@ -6,20 +6,43 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class Highlighting {
     public SpannableString highlight(String text){
-        String content = text;
-        SpannableString spannableString = new SpannableString(content);
-        String word = "해커톤";
-        int start=content.indexOf(word);
-        Log.i("start","start:"+start);
-        while(start!=-1) {
-            int end = start + word.length();
-            spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannableString.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            start = content.indexOf(word, start + 1);}
-        return spannableString;
+        String mContent = text;
+        String mHighlightingWord="안드로이드";
+        SpannableString mSpannableString = new SpannableString(mContent);
+        int mStart=mContent.indexOf(mHighlightingWord);
+        Log.i("start","start:"+mStart);
+        while(mStart!=-1) {
+            int mEnd = mStart + mHighlightingWord.length();
+            mSpannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")), mStart, mEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mSpannableString.setSpan(new UnderlineSpan(), mStart, mEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mStart = mContent.indexOf(mHighlightingWord, mStart + 1);}
+        return mSpannableString;
     }
 
+    //경로의 텍스트 파일읽기
+    public String ReadTextFile(String path){
+        StringBuffer strBuffer = new StringBuffer();
+        try{
+            InputStream is = new FileInputStream(path);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line="";
+            while((line=reader.readLine())!=null){
+                strBuffer.append(line+"\n");
+            }
+            reader.close();
+            is.close();
+        }catch (IOException e){
+            e.printStackTrace();
+            return "";
+        }
+        return strBuffer.toString();
+    }
 }

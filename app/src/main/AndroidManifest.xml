@@ -15,10 +15,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppThemeNoTitle">
+
+        <activity android:name=".UserAccount"></activity>
+
         <meta-data
-        android:name="com.kakao.sdk.AppKey"
-        android:value="@string/kakao_app_key" />
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
 
         <activity
             android:name=".Splash"
@@ -33,26 +36,27 @@
         <activity
             android:name=".SignUp"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".Image_MainAdpater"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".FileView"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".CV_record"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".SelectMode"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:theme="@style/AppThemeNoTitle" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

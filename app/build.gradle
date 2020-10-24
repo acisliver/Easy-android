@@ -1,8 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/NOTICE.md'
+        exclude 'META-INF/io.netty.versions.properties'
+        exclude 'META-INF/LICENSE.md'
+    }
 
     defaultConfig {
         applicationId "com.example.easy_written"
@@ -10,7 +17,6 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -51,16 +57,19 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //google login
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.firebase:firebase-analytics:17.2.1'//파이어 베이스 입분석
     implementation 'com.google.firebase:firebase-core:17.2.1'//파이어 베이스 코어
-    implementation 'com.google.firebase:firebase-auth:19.1.0'//파이어 베이스 인증
+    implementation 'com.google.firebase:firebase-auth:19.4.0'//파이어 베이스 인증
     implementation 'com.firebaseui:firebase-ui-auth:4.2.1'//파이어 베이스 인증2
     implementation 'com.github.bumptech.glide:glide:4.11.0'//글라이드 이미지 로딩
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'//글라이드 이미지 로딩2
+    implementation 'com.google.firebase:firebase-database:19.4.0'
 
     //kakao
     implementation group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
+
+
 }
 
 

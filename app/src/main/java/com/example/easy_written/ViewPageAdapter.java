@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 public class ViewPageAdapter extends FragmentStatePagerAdapter {
-
     public ViewPageAdapter(@NonNull FragmentManager fm) {
         super(fm);
     }
@@ -15,6 +14,7 @@ public class ViewPageAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
+
         switch (position){
             case 0:
                 return Image_Tap.newInstance();

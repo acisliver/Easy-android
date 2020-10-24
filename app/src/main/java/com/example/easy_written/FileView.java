@@ -4,39 +4,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import java.io.File;
 import java.util.ArrayList;
 
-
-//참고 사이트 : https://webnautes.tistory.com/1300
-
-public class FileView extends AppCompatActivity {
+public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
     private CustomAdapter mAdapter;
-    ArrayList<String> filesNameList = new ArrayList<>();
-    ArrayList<String> filesDateList = new ArrayList<>();
-    ArrayList<File_Data> Variable = new ArrayList<>();
-    File[] files;
-    //고대은
-    private int modify_flag;
-    private int checked;
+    private ArrayList<String> filesNameList = new ArrayList<>();
+    private ArrayList<String> filesDateList = new ArrayList<>();
+    private ArrayList<File_Data> mVariable = new ArrayList<>();
+    private File[] mFiles;
+    private int mModifyFlag;
+    private int mChecked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +40,20 @@ public class FileView extends AppCompatActivity {
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_list);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
-        //고대은
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        modify_flag = 0;
-
         final CheckBox check_all = findViewById(R.id.check_all);
-
+        mModifyFlag = 0;
         mArrayList = new ArrayList<>();
-
         mAdapter = new CustomAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
 
+
+        //actionbar
+        androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false); // 기존 title 지우기
+        actionBar.setDisplayHomeAsUpEnabled(true); // 찾기 버튼 만들기
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 mLinearLayoutManager.getOrientation());
@@ -66,39 +63,36 @@ public class FileView extends AppCompatActivity {
             //파일 클릭 시
             @Override
             public void onClick(View view, int position) {//recycler list 하나씩 위치에 따라 다른 화면 띄우기, 지금은 파일 하나만 했음
-                if (modify_flag == 0) {
+                if (mModifyFlag == 0) {
                     Intent intent = new Intent(getBaseContext(), Image_MainAdpater.class);
-
                     //파일값 넘기기
                     intent.putExtra("filesNameList", filesNameList.get(position));
                     intent.putExtra("filesDateList", filesDateList.get(position));
-                    intent.putExtra("paths", files[position].getPath());
+                    intent.putExtra("paths", mFiles[position].getPath());
 
                     startActivity(intent);
                 }
                 //수정 모드(하단 바 있을 시)
                 else {
-                    checked = Variable.get(position).getChecked();
-                    if (checked == 0){
-                        Variable.get(position).setChecked(1);
-                    }
-                    else{
-                        Variable.get(position).setChecked(0);
-                    }
+
+                    mChecked = mVariable.get(position).getChecked();
+                    if (mChecked == 0)
+                        mVariable.get(position).setChecked(1);
+                    else
+                        mVariable.get(position).setChecked(0);
+
                     mAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onLongClick(View view, int position) {
-                modify_flag = 1;
-                handleVisible(modify_flag);
+                mModifyFlag = 1;
+                handleVisible(mModifyFlag);
                 mAdapter.notifyDataSetChanged();
             }
         }));
 
-
-        //고대은
         //bottomnavigationview의 아이콘을 선택 했을때 기능 설정
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -122,8 +116,8 @@ public class FileView extends AppCompatActivity {
                     }
                     //하단 바 내리기
                     case R.id.close_tab: {
-                        modify_flag = 0;
-                        handleVisible(modify_flag);
+                        mModifyFlag = 0;
+                        handleVisible(mModifyFlag);
                         mAdapter.notifyDataSetChanged();
                         return true;
                     }
@@ -142,7 +136,7 @@ public class FileView extends AppCompatActivity {
                 if (check_all.isChecked()==true) checked=1;
                 else checked=0;
                 for (int pos=0;pos<count;pos++){
-                    Variable.get(pos).setChecked(checked);
+                    mVariable.get(pos).setChecked(checked);
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -150,19 +144,44 @@ public class FileView extends AppCompatActivity {
 
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/";
         File directory = new File(path);
-        files = directory.listFiles();
-        if(files!=null) {
-            for (int i = 0; i < files.length; i++) {
-                String name = files[i].getName();
-                String[] result = name.split("#");
-                filesNameList.add(result[0]);
-                filesDateList.add(result[1]);
-                Variable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
-                mArrayList.add(Variable.get(i));
-            }
-            mAdapter.notifyDataSetChanged();
+
+        mFiles = directory.listFiles();
+
+        for (int i = 0; i < mFiles.length; i++) {
+            String name = mFiles[i].getName();
+            String[] result = name.split("#");
+            filesNameList.add(result[0]);
+            filesDateList.add(result[1]);
+            mVariable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
+            mArrayList.add(mVariable.get(i));
+
         }
     }
+
+    //뒤로가기버튼 활성화
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:{
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //파일 검색 icon
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.find_file_menu,menu);
+        MenuItem item=menu.findItem(R.id.search_file_icon);
+        SearchView searchView= (SearchView) item.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
 
     public interface ClickListener {
         void onClick(View view, int position);
@@ -211,7 +230,6 @@ public class FileView extends AppCompatActivity {
         }
     }
 
-    //고대은
     //하단 바 표시 여부 modify_flag=0 Gone, modify_flag=1 Visible
     public void handleBottomNavVisible(int modify_flag) {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
