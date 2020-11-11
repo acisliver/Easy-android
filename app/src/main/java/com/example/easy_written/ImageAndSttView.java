@@ -1,72 +1,75 @@
 package com.example.easy_written;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class Image_Tap extends Fragment {
-    private View mView;
+public class ImageAndSttView extends AppCompatActivity {
     private TextView mTextView;
     private Animator mCurrentAnimator;
     private ScrollView mScroll;
-    private String mImageTT,mImageTT2;
     private int mShortAnimationDuration;
     private ArrayList<String> mImagePtahArrayList;
     private ArrayList<ImageView> mImageViewArrayList;
+    private MediaPlayer mMediaPlayer;
+    private int mAudioDuration;
+    private SeekBar mAudioSeekBar;
+    public boolean mPlayAndCancelCheck =true, mIsPause=false;
 
-    public static Image_Tap newInstance(){
-        Image_Tap mImageTap=new Image_Tap();
-        return mImageTap;
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView=inflater.inflate(R.layout.activitiy_image_tap,container,false);
-        mScroll=(ScrollView)mView.findViewById(R.id.Scroll);
-        mTextView=(TextView)mView.findViewById(R.id.text_view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_image_and_stt_view);
 
-        Image_MainAdpater mImageMainAdpater=new Image_MainAdpater();
-        mImageTT=mImageMainAdpater.counter();
-        mImageTT2=mImageTT+"/"+"STTtext.txt";
+
+        mScroll=(ScrollView)findViewById(R.id.Scroll);
+        mTextView=(TextView)findViewById(R.id.text_view);
+
+        Intent mintent=getIntent();
+        String paths=mintent.getStringExtra("paths");
+
 
         //setText
         Highlighting mHighlighting=new Highlighting();
-        mTextView.setText(mHighlighting.ReadTextFile(mImageTT2));
+        mTextView.setText(mHighlighting.ReadTextFile(paths+"/"+"STTtext.txt"));
 
         //imagelist
         mImagePtahArrayList=new ArrayList<>();
 
         //경로 하위 폴터에서 이미지 파일 찾기
-        findPNGFile(mImageTT);
+        findPNGFile(paths);
         mImageViewArrayList=new ArrayList<>();
 
         //ImageTab 사진 넣기
-        GridLayout gridLayout=mView.findViewById(R.id.container);
+        GridLayout gridLayout=findViewById(R.id.container);
         for(int k=0;k<mImagePtahArrayList.size();k++){
             File mImgFile = new  File(mImagePtahArrayList.get(k));
             if(mImgFile.exists()){
-                ImageView mMyImage = new ImageView(getActivity());
+                ImageView mMyImage = new ImageView(getApplicationContext());
                 mMyImage.setClickable(true);
 
                 mMyImage.setImageBitmap(getImageFile(mImagePtahArrayList.get(k)));
@@ -88,7 +91,25 @@ public class Image_Tap extends Fragment {
         // Retrieve and cache the system's default "short" animation time.
         mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
-        return mView;
+
+        ImageView AudioRunButton=findViewById(R.id.AudioRunButton);
+        AudioRunButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mIWantPlayAudio = paths +"/"+ "_audio_record"+".3gp";
+                PlayAndCancel(mIWantPlayAudio);
+                if(mPlayAndCancelCheck ==true) {
+                    AudioRunButton.setImageDrawable(getResources().
+                            getDrawable(R.drawable.ic_baseline_play_circle_filled_24, getApplicationContext().getTheme()));
+                }
+                else{
+                    AudioRunButton.setImageDrawable(getResources().
+                            getDrawable(R.drawable.ic_baseline_pause_circle_filled_24, getApplicationContext().getTheme()));
+                }
+            }
+        });
+
+        mAudioSeekBar = (SeekBar) findViewById(R.id.AudioSeekBar) ;
     }
 
     private void zoomImageFromThumb(final View thumbView, String str) {
@@ -98,7 +119,7 @@ public class Image_Tap extends Fragment {
             mCurrentAnimator.cancel();
         }
         // Load the high-resolution "zoomed-in" image.
-        final ImageView mExpandedImageView = (ImageView) mView.findViewById(
+        final ImageView mExpandedImageView = (ImageView) findViewById(
                 R.id.expanded_image);
         mExpandedImageView.setImageURI(Uri.fromFile(new File(str)));
 
@@ -114,7 +135,7 @@ public class Image_Tap extends Fragment {
         // bounds, since that's the origin for the positioning animation
         // properties (X, Y).
         thumbView.getGlobalVisibleRect(mStartBounds);
-        mView.findViewById(R.id.container)
+        findViewById(R.id.container)
                 .getGlobalVisibleRect(mFinalBounds, mGlobalOffset);
         mStartBounds.offset(-mGlobalOffset.x, -mGlobalOffset.y);
         mFinalBounds.offset(-mGlobalOffset.x, -mGlobalOffset.y);
@@ -278,5 +299,58 @@ public class Image_Tap extends Fragment {
                 mScroll.smoothScrollTo(0,0);
             }
         };
+    }
+
+    private void PlayAndCancel(String path){
+        if(mPlayAndCancelCheck ==true) {
+            mMediaPlayer = new MediaPlayer();
+            try {
+                mMediaPlayer.setDataSource(path);
+                mMediaPlayer.prepare();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }catch(NullPointerException e){
+                e.printStackTrace();
+            }catch (IllegalStateException e){
+                e.printStackTrace();
+            }
+            mAudioDuration = mMediaPlayer.getDuration();
+            mAudioSeekBar.setMax(mAudioDuration);
+            mAudioSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser)
+                        mMediaPlayer.seekTo(progress);
+                }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
+            mMediaPlayer.start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while(mMediaPlayer.isPlaying()){
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        mAudioSeekBar.setProgress(mMediaPlayer.getCurrentPosition());
+                    }
+                }
+            }).start();
+            mPlayAndCancelCheck =false;
+        }
+        else if(mPlayAndCancelCheck ==false){
+            Log.e("녹음파일 재생 중지","중지");
+            if (mMediaPlayer != null) {
+                mIsPause =true;
+                mMediaPlayer.pause();
+            }
+            mPlayAndCancelCheck =true;
+        }
     }
 }

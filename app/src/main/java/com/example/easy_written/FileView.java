@@ -64,7 +64,7 @@ public class FileView extends AppCompatActivity  {
             @Override
             public void onClick(View view, int position) {//recycler list 하나씩 위치에 따라 다른 화면 띄우기, 지금은 파일 하나만 했음
                 if (mModifyFlag == 0) {
-                    Intent intent = new Intent(getBaseContext(), Image_MainAdpater.class);
+                    Intent intent = new Intent(getBaseContext(), ImageAndSttView.class);
                     //파일값 넘기기
                     intent.putExtra("filesNameList", filesNameList.get(position));
                     intent.putExtra("filesDateList", filesDateList.get(position));

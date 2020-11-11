@@ -18,8 +18,8 @@ public class Touch_list_item extends AppCompatActivity {
             public void onClick(View v) {
                 switch (v.getId()){
                     case R.id.list_item:
-                        Intent mIntent=new Intent(Touch_list_item.this,KeywordTime.class);
-                        startActivity(mIntent);
+                        //Intent mIntent=new Intent(Touch_list_item.this,ImageAndSttView.class);
+                        //startActivity(mIntent);
                 }
             }
 

@@ -15,13 +15,21 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.bumptech.glide.Glide;
+import com.google.android.material.navigation.NavigationView;
 import com.microsoft.cognitiveservices.speech.CancellationReason;
 import com.microsoft.cognitiveservices.speech.ResultReason;
 import com.microsoft.cognitiveservices.speech.SpeechConfig;
@@ -48,6 +56,7 @@ public class CV_record extends AppCompatActivity {
     private MediaScanner mMediaScanner; // 사진 저장 시 갤러리 폴더에 바로 반영사항을 업데이트 시켜주려면 이 것이 필요하다(미디어 스캐닝)
     private ImageView mPlayandSaveButton;
     private ArrayList<String> mPicturePathList;
+    private DrawerLayout mDrawerLayout;
 
     //오디오
     ImageView mStartAndStopButton;
@@ -82,7 +91,7 @@ public class CV_record extends AppCompatActivity {
             }
         });
 
-        //종료버튼
+        //저장버튼
         mPlayandSaveButton=findViewById(R.id.PlayandSaveButton);
         mPlayandSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +147,41 @@ public class CV_record extends AppCompatActivity {
                         startActivityForResult(mIntent, mREQUESTIMAGECAPTURE);
                     }
                 }
+            }
+        });
+
+
+        //메뉴
+        NavigationView mNavigationViewing = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = mNavigationViewing.getHeaderView(0);
+        TextView mNavUsername = (TextView) headerView.findViewById(R.id.navi_user_id);
+        mNavUsername.setText("easy");
+        ImageView mNaviUserImage = headerView.findViewById(R.id.navi_user_image);
+        Glide.with(this).load(R.drawable.easyicon2).into(mNaviUserImage);
+
+        //액션바
+        androidx.appcompat.widget.Toolbar mToolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false); // 기존 title 지우기
+        actionBar.setDisplayHomeAsUpEnabled(true); // 메뉴 버튼 만들기
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24); //메뉴 버튼 이미지 지정
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                menuItem.setChecked(true);
+                mDrawerLayout.closeDrawers();
+                int mId = menuItem.getItemId();
+                //파일 보기로 이동
+                if(mId == R.id.goToFile){
+                    Intent mintent=new Intent(getApplicationContext(),FileView.class);
+                    startActivity(mintent);
+                }
+                return true;
             }
         });
     }
@@ -412,6 +456,18 @@ public class CV_record extends AppCompatActivity {
         File mFile = new File( filename );
         File mFileNew = new File( newFilename );
         if( mFile.exists() ) mFile.renameTo( mFileNew );
+    }
+
+    //메뉴 탭에서 항목 선택시 동작
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: { // 왼쪽 상단 버튼 눌렀을 때
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

@@ -101,7 +101,7 @@ public class Splash extends AppCompatActivity {
     /** Get the {@link Activity} to start when the splash screen times out. */
     @SuppressWarnings("rawtypes")
     public Class GetNextActivityClass() {
-        return MainActivity.class;
+        return CV_record.class;
     };
 
     /**
