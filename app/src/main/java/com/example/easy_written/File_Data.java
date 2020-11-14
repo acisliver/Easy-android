@@ -3,10 +3,12 @@ package com.example.easy_written;
 public class File_Data {
     private String mName;
     private String mDate;
+    private String mCategory;
     private int mChecked;
 
 
-    public File_Data(String name,String date){
+    public File_Data(String category,String name,String date){
+        this.mCategory=category;
         this.mName=name;
         this.mDate=date;
         this.mChecked = 0;
@@ -31,4 +33,12 @@ public class File_Data {
     public int getChecked() { return mChecked; }
 
     public void setChecked(int checked) { this.mChecked = checked; }
+
+    public String getmCategory() {
+        return mCategory;
+    }
+
+    public void setmCategory(String mCategory) {
+        this.mCategory = mCategory;
+    }
 }

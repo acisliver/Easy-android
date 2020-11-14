@@ -90,4 +90,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         viewholder.mName.setBackgroundColor(Color.parseColor(colorString));
         viewholder.mDate.setBackgroundColor(Color.parseColor(colorString));
     }
+
+    public void filterList(ArrayList<File_Data> filteredList){
+        mList=filteredList;
+        notifyDataSetChanged();
+    }
 }

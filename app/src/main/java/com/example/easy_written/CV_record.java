@@ -85,7 +85,7 @@ public class CV_record extends AppCompatActivity {
 
     //category
     private ArrayList<String> mCategoryArrayList;
-    final String sharedPreferenceKey="saveArrayListToSharedPreference";
+    private final String sharedPreferenceKey="saveArrayListToSharedPreference";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,9 +185,10 @@ public class CV_record extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if(!dialogSpinner.getSelectedItem().toString().equalsIgnoreCase("카테고리 선택")){
                             CheckTypesTask mTypesTask=new CheckTypesTask();
-                            String mPasstext=mSaveFileName.getText().toString();
+                            String mTmpString=mSaveFileName.getText().toString();
+                            String mTmpCategory=dialogSpinner.getSelectedItem().toString();
+                            String mPasstext=mTmpCategory+"#"+mTmpString;
                             mTypesTask.execute(mPasstext);
-
                         }else{
                             Toast.makeText(getApplicationContext(),"카테고리를 선택해 주세요",Toast.LENGTH_SHORT).show();
                         }
@@ -347,7 +348,6 @@ public class CV_record extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             Toast.makeText(getApplicationContext(),"저장완료!!",Toast.LENGTH_SHORT).show();
             mAsyncDialog.dismiss();
-            onBackPressed();
             super.onPostExecute(aVoid);
         }
 
@@ -562,6 +562,7 @@ public class CV_record extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         JSONArray a = new JSONArray();
+
         for (int i = 0; i < values.size(); i++) {
             a.put(values.get(i));
         }

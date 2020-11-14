@@ -1,16 +1,27 @@
 package com.example.easy_written;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -20,18 +31,25 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.File;
 import java.util.ArrayList;
 
 public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
     private CustomAdapter mAdapter;
+    private ArrayList<String> filesCategoryList = new ArrayList<>();
     private ArrayList<String> filesNameList = new ArrayList<>();
     private ArrayList<String> filesDateList = new ArrayList<>();
     private ArrayList<File_Data> mVariable = new ArrayList<>();
+    private ArrayList<String> mCategotyList;
     private File[] mFiles;
     private int mModifyFlag;
     private int mChecked;
+    private final String sharedPreferenceKey="saveArrayListToSharedPreference";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +64,111 @@ public class FileView extends AppCompatActivity  {
         mArrayList = new ArrayList<>();
         mAdapter = new CustomAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
+
+        //spinner
+        Spinner mCategorySpinner=findViewById(R.id.categorySpinner);
+        mCategotyList=new ArrayList<>();
+        Context mContext=getApplicationContext();
+        mCategotyList=getStringArrayPref(mContext,sharedPreferenceKey);
+        ArrayAdapter<String> mSpinnerAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                R.layout.support_simple_spinner_dropdown_item,mCategotyList);
+        mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        mCategorySpinner.setAdapter(mSpinnerAdapter);
+        mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("카테고리 선택")) {
+                    fileter(mCategorySpinner.getItemAtPosition(position).toString());
+                }else{
+                    fileter("");
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        //add category
+        ImageView addCategoryOfFileView=findViewById(R.id.addCategoryOfFileView);
+        addCategoryOfFileView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mAddCategoryAlertofFileView = new AlertDialog.Builder(FileView.this);
+                EditText mAddCategoryEditTextofFileView=new EditText(FileView.this);
+                mAddCategoryAlertofFileView.setMessage("카테고리 이름");
+                mAddCategoryAlertofFileView.setView(mAddCategoryEditTextofFileView);
+                mAddCategoryAlertofFileView.setPositiveButton("추가", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Context mContext=getApplicationContext();
+                        mCategotyList.clear();
+                        mCategotyList=getStringArrayPref(mContext,sharedPreferenceKey);
+                        mCategotyList.add(mAddCategoryEditTextofFileView.getText().toString());
+                        setStringArrayPref(mContext,sharedPreferenceKey,mCategotyList);
+
+                        //카테고리 생성시 스피너가 클릭되지 않는 버그가 있어서 강제로 스피너 refresh
+                        ArrayAdapter<String> mCategoryArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                                R.layout.support_simple_spinner_dropdown_item,mCategotyList);
+                        mCategoryArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                        mCategorySpinner.setAdapter(mCategoryArrayAdapter);
+                    }
+                });
+                mAddCategoryAlertofFileView.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("categoty","취소");
+                    }
+                });
+                AlertDialog mAddCategoryAlertDialogofFileView=mAddCategoryAlertofFileView.create();
+                mAddCategoryAlertDialogofFileView.show();
+            }
+        });
+
+        //delete category
+        ImageView subCategoryOfFileView=findViewById(R.id.subCategoryOfFileView);
+        subCategoryOfFileView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mDeleteCategoryAlertofFileView = new AlertDialog.Builder(FileView.this);
+                EditText mDeleteCategoryEditTextofFileView=new EditText(FileView.this);
+                mDeleteCategoryAlertofFileView.setMessage("카테고리 삭제");
+                mDeleteCategoryAlertofFileView.setView(mDeleteCategoryEditTextofFileView);
+                mDeleteCategoryAlertofFileView.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String mDeleteCategoty=mDeleteCategoryEditTextofFileView.getText().toString();
+                        ArrayList<String> mGetCategory=new ArrayList<>();
+                        mGetCategory=getStringArrayPref(mContext,sharedPreferenceKey);
+                        for(int i=0;i<mGetCategory.size();i++){
+                            if(mDeleteCategoty.equals(mGetCategory.get(i))){
+                                mGetCategory.remove(i);
+                                Toast.makeText(getApplicationContext(),"삭제 성공",Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                            if(i==(mGetCategory.size()-1)) {
+                                Toast.makeText(getApplicationContext(), "삭제 실패", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        setStringArrayPref(mContext,sharedPreferenceKey,mGetCategory);
+                        ArrayAdapter<String> mCategoryArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                                R.layout.support_simple_spinner_dropdown_item,mGetCategory);
+                        mCategoryArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                        mCategorySpinner.setAdapter(mCategoryArrayAdapter);
+
+                    }
+                });
+                mDeleteCategoryAlertofFileView.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog mDeleteCategoryAlertDialogofFileView=mDeleteCategoryAlertofFileView.create();
+                mDeleteCategoryAlertDialogofFileView.show();
+            }
+        });
 
 
         //actionbar
@@ -62,7 +185,7 @@ public class FileView extends AppCompatActivity  {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new ClickListener() {
             //파일 클릭 시
             @Override
-            public void onClick(View view, int position) {//recycler list 하나씩 위치에 따라 다른 화면 띄우기, 지금은 파일 하나만 했음
+            public void onClick(View view, int position) {
                 if (mModifyFlag == 0) {
                     Intent intent = new Intent(getBaseContext(), ImageAndSttView.class);
                     //파일값 넘기기
@@ -150,12 +273,23 @@ public class FileView extends AppCompatActivity  {
         for (int i = 0; i < mFiles.length; i++) {
             String name = mFiles[i].getName();
             String[] result = name.split("#");
-            filesNameList.add(result[0]);
-            filesDateList.add(result[1]);
-            mVariable.add(new File_Data("날짜:" + filesDateList.get(i), "파일이름 : " + filesNameList.get(i)));
+            filesCategoryList.add(result[0]);
+            filesNameList.add(result[1]);
+            filesDateList.add(result[2]);
+            mVariable.add(new File_Data("카테고리:"+filesCategoryList.get(i),"날짜:" + filesDateList.get(i), "파일이름 : " + "["+filesCategoryList.get(i)+"]"+filesNameList.get(i)));
             mArrayList.add(mVariable.get(i));
 
         }
+    }
+
+    private void fileter(String text){
+        ArrayList<File_Data> mFilteredList=new ArrayList<>();
+        for(File_Data item:mVariable){
+            if(item.getmCategory().toLowerCase().contains(text)){
+                mFilteredList.add(item);
+            }
+        }
+        mAdapter.filterList(mFilteredList);
     }
 
     //뒤로가기버튼 활성화
@@ -254,5 +388,40 @@ public class FileView extends AppCompatActivity  {
         handleCheckBoxVisible(modify_flag);
         handleCheckedAllVisible(modify_flag);
         handleBottomNavVisible(modify_flag);
+    }
+
+    //sharedPreference
+    private void setStringArrayPref(Context context, String key, ArrayList<String> values) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        JSONArray a = new JSONArray();
+
+        for (int i = 0; i < values.size(); i++) {
+            a.put(values.get(i));
+        }
+        if (!values.isEmpty()) {
+            editor.putString(key, a.toString());
+        } else {
+            editor.putString(key, null);
+        }
+        editor.apply();
+    }
+
+    private ArrayList<String> getStringArrayPref(Context context, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String json = prefs.getString(key, null);
+        ArrayList<String> urls = new ArrayList<String>();
+        if (json != null) {
+            try {
+                JSONArray a = new JSONArray(json);
+                for (int i = 0; i < a.length(); i++) {
+                    String url = a.optString(i);
+                    urls.add(url);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return urls;
     }
 }
