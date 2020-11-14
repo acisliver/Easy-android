@@ -2,8 +2,10 @@ package com.example.easy_written;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -14,11 +16,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
@@ -34,6 +41,10 @@ import com.microsoft.cognitiveservices.speech.CancellationReason;
 import com.microsoft.cognitiveservices.speech.ResultReason;
 import com.microsoft.cognitiveservices.speech.SpeechConfig;
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,7 +74,7 @@ public class CV_record extends AppCompatActivity {
     String mAudiopathSave="";
     MediaRecorder mMediaRecorder;
     int mStartAndStopCheck=1;
-    EditText mSaveFileName;
+    //private EditText mSaveFileName;
 
     //STT
     private static final String mSPEECHSUBSCRIPTIONKEY = "98ce7d7369024192aa438ba812b249c5";
@@ -72,6 +83,10 @@ public class CV_record extends AppCompatActivity {
     private SpeechRecognizer mReco;
     private boolean mContinuousListeningStarted = false;
 
+    //category
+    private ArrayList<String> mCategoryArrayList;
+    final String sharedPreferenceKey="saveArrayListToSharedPreference";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +94,19 @@ public class CV_record extends AppCompatActivity {
 
         int mRequestCode = 5;//STT permission request code
         mPicturePathList=new ArrayList<>();
+
+        //Categoty
+        mCategoryArrayList=new ArrayList<>();
+        Context mContext=getApplicationContext();
+        mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
+        if(mCategoryArrayList.size()==0) mCategoryArrayList.add("tmp");
+        mCategoryArrayList.set(0,"카테고리 선택");
+        setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
+
+        //임시로 카테고리 초기화
+        //mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
+        //mCategoryArrayList.clear();
+        //setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
 
         //오디오
         mStartAndStopButton = findViewById(R.id.StartAndStopButton);
@@ -96,21 +124,73 @@ public class CV_record extends AppCompatActivity {
         mPlayandSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaRecorder.stop();
-                mMediaRecorder.release();
 
                 AlertDialog.Builder mAlert = new AlertDialog.Builder(CV_record.this);
                 mAlert.setMessage("파일이름");
 
-                mSaveFileName=new EditText(CV_record.this);
+                //spinner,edit,image
+                View mView=getLayoutInflater().inflate(R.layout.dialog_spinner,null);
+                final EditText mSaveFileName=(EditText) mView.findViewById(R.id.saveFileName);
+                final ImageView addCategory=(ImageView)mView.findViewById(R.id.addCategory);
+                final Spinner dialogSpinner=(Spinner)mView.findViewById(R.id.dialogSpinner);
+                mCategoryArrayList.clear();
+                mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
+                ArrayAdapter<String> mArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.support_simple_spinner_dropdown_item,mCategoryArrayList);
+                mArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                dialogSpinner.setAdapter(mArrayAdapter);
+
                 mAlert.setView(mSaveFileName);
+                mAlert.setView(addCategory);
+                mAlert.setView(dialogSpinner);
+                mAlert.setView(mView);
+
+                //카토고리 추가
+                addCategory.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder mCategoryAlert = new AlertDialog.Builder(CV_record.this);
+                        EditText addCategoryEditText=new EditText(CV_record.this);
+                        mCategoryAlert.setMessage("카테고리 이름");
+                        mCategoryAlert.setView(addCategoryEditText);
+                        mCategoryAlert.setPositiveButton("추가", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Context mContext=getApplicationContext();
+                                mCategoryArrayList.clear();
+                                mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
+                                mCategoryArrayList.add(addCategoryEditText.getText().toString());
+                                setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
+
+                                //카테고리 생성시 스피너가 클릭되지 않는 버그가 있어서 강제로 스피너 refresh
+                                ArrayAdapter<String> mCategoryArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                                        R.layout.support_simple_spinner_dropdown_item,mCategoryArrayList);
+                                mCategoryArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                                dialogSpinner.setAdapter(mCategoryArrayAdapter);
+                            }
+                        });
+                        mCategoryAlert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.d("categoty","취소");
+                            }
+                        });
+                        AlertDialog mCategoryAlertDialog=mCategoryAlert.create();
+                        mCategoryAlertDialog.show();
+                    }
+                });
 
                 mAlert.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CheckTypesTask mTypesTask=new CheckTypesTask();
-                        String mPasstext=mSaveFileName.getText().toString();
-                        mTypesTask.execute(mPasstext);
+                        if(!dialogSpinner.getSelectedItem().toString().equalsIgnoreCase("카테고리 선택")){
+                            CheckTypesTask mTypesTask=new CheckTypesTask();
+                            String mPasstext=mSaveFileName.getText().toString();
+                            mTypesTask.execute(mPasstext);
+
+                        }else{
+                            Toast.makeText(getApplicationContext(),"카테고리를 선택해 주세요",Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -121,9 +201,8 @@ public class CV_record extends AppCompatActivity {
                     }
                 });
 
-                mAlert.show();
-                Message mMsg=new Message();
-                mMsg.obj=mSaveFileName.getText();
+                AlertDialog mAlertDialog=mAlert.create();
+                mAlertDialog.show();
             }
         });
 
@@ -149,7 +228,6 @@ public class CV_record extends AppCompatActivity {
                 }
             }
         });
-
 
         //메뉴
         NavigationView mNavigationViewing = (NavigationView) findViewById(R.id.nav_view);
@@ -275,6 +353,8 @@ public class CV_record extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... ReceivedFileName) {
+
+
             //저장시킬 파일 만들기
             String mReceivedFileNameToString=ReceivedFileName[0];
             SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
@@ -311,7 +391,14 @@ public class CV_record extends AppCompatActivity {
                 ex.printStackTrace();
             }
             publishProgress();
+
+            //녹음 종료
+            mMediaRecorder.stop();
+            mMediaRecorder.release();
+
             return null;
+
+
         }
         @Override
         protected void onCancelled() {
@@ -468,6 +555,40 @@ public class CV_record extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //sharedPreference
+    private void setStringArrayPref(Context context, String key, ArrayList<String> values) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        JSONArray a = new JSONArray();
+        for (int i = 0; i < values.size(); i++) {
+            a.put(values.get(i));
+        }
+        if (!values.isEmpty()) {
+            editor.putString(key, a.toString());
+        } else {
+            editor.putString(key, null);
+        }
+        editor.apply();
+    }
+
+    private ArrayList<String> getStringArrayPref(Context context, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String json = prefs.getString(key, null);
+        ArrayList<String> urls = new ArrayList<String>();
+        if (json != null) {
+            try {
+                JSONArray a = new JSONArray(json);
+                for (int i = 0; i < a.length(); i++) {
+                    String url = a.optString(i);
+                    urls.add(url);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return urls;
     }
 }
 
