@@ -83,9 +83,12 @@ public class CV_record extends AppCompatActivity {
     private SpeechRecognizer mReco;
     private boolean mContinuousListeningStarted = false;
 
-    //category
+    /*추가한 부분*/
+    //sharedpreference에 카테고리를 저장
+    //카테고리가 필요 할 때 마다 mCategoryArrayList에 저장하여 사용(이하 카테고리 배열이라고 하겠음)
     private ArrayList<String> mCategoryArrayList;
     private final String sharedPreferenceKey="saveArrayListToSharedPreference";
+    /*끝*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,18 +98,17 @@ public class CV_record extends AppCompatActivity {
         int mRequestCode = 5;//STT permission request code
         mPicturePathList=new ArrayList<>();
 
-        //Categoty
+        /*추가한 부분*/
+        //카테고리 배열 처음 부분에 '카테고리 선택' 추가
+        //if를 사용한 것은 set을 이용해 0번째 배열에 접근을 해야 하지만, 배열에 아무것도 없을 경우 오류가 발생하기 때문에
         mCategoryArrayList=new ArrayList<>();
         Context mContext=getApplicationContext();
         mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
         if(mCategoryArrayList.size()==0) mCategoryArrayList.add("tmp");
         mCategoryArrayList.set(0,"카테고리 선택");
         setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
+        /*끝*/
 
-        //임시로 카테고리 초기화
-        //mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
-        //mCategoryArrayList.clear();
-        //setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
 
         //오디오
         mStartAndStopButton = findViewById(R.id.StartAndStopButton);
@@ -128,11 +130,14 @@ public class CV_record extends AppCompatActivity {
                 AlertDialog.Builder mAlert = new AlertDialog.Builder(CV_record.this);
                 mAlert.setMessage("파일이름");
 
-                //spinner,edit,image
-                View mView=getLayoutInflater().inflate(R.layout.dialog_spinner,null);
+                /*추가한 부분*/
+                //layout의 xml파일 중 dialog_spinner에 연결하여 다이어 로그창으로 사용용
+               View mView=getLayoutInflater().inflate(R.layout.dialog_spinner,null);
                 final EditText mSaveFileName=(EditText) mView.findViewById(R.id.saveFileName);
                 final ImageView addCategory=(ImageView)mView.findViewById(R.id.addCategory);
                 final Spinner dialogSpinner=(Spinner)mView.findViewById(R.id.dialogSpinner);
+
+                //카테고리 배열에 카테고리를 불러옴
                 mCategoryArrayList.clear();
                 mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
                 ArrayAdapter<String> mArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
@@ -140,12 +145,13 @@ public class CV_record extends AppCompatActivity {
                 mArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                 dialogSpinner.setAdapter(mArrayAdapter);
 
+                //dialog창에 구성요소들 추가
                 mAlert.setView(mSaveFileName);
                 mAlert.setView(addCategory);
                 mAlert.setView(dialogSpinner);
                 mAlert.setView(mView);
 
-                //카토고리 추가
+                //'+'버튼을 누르면 카토고리 추가 dialog창뜨게 함
                 addCategory.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -156,7 +162,7 @@ public class CV_record extends AppCompatActivity {
                         mCategoryAlert.setPositiveButton("추가", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Context mContext=getApplicationContext();
+                                //카테고리배열에 카테고리정보를 불러옴
                                 mCategoryArrayList.clear();
                                 mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
                                 mCategoryArrayList.add(addCategoryEditText.getText().toString());
@@ -172,7 +178,6 @@ public class CV_record extends AppCompatActivity {
                         mCategoryAlert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d("categoty","취소");
                             }
                         });
                         AlertDialog mCategoryAlertDialog=mCategoryAlert.create();
@@ -180,11 +185,14 @@ public class CV_record extends AppCompatActivity {
                     }
                 });
 
+                //dialog창의 파일 저장 버튼(카테고리 아님)
                 mAlert.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //카테고리가 선택이 되었으면
                         if(!dialogSpinner.getSelectedItem().toString().equalsIgnoreCase("카테고리 선택")){
                             CheckTypesTask mTypesTask=new CheckTypesTask();
+                            //이전까지 파일 이름만 async에 보냈다면, 이제는 파일이 속한 카테고리의 정보까지 합쳐서 보냄(추후에 #으로 구분)
                             String mTmpString=mSaveFileName.getText().toString();
                             String mTmpCategory=dialogSpinner.getSelectedItem().toString();
                             String mPasstext=mTmpCategory+"#"+mTmpString;
@@ -206,6 +214,7 @@ public class CV_record extends AppCompatActivity {
                 mAlertDialog.show();
             }
         });
+        /*끝*/
 
 
         // 사진 저장 후 미디어 스캐닝을 돌려줘야 갤러리에 반영됨.
@@ -348,6 +357,10 @@ public class CV_record extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             Toast.makeText(getApplicationContext(),"저장완료!!",Toast.LENGTH_SHORT).show();
             mAsyncDialog.dismiss();
+            Intent mRestartIntent = getIntent();
+            finish();
+            startActivity(mRestartIntent);
+
             super.onPostExecute(aVoid);
         }
 
@@ -557,7 +570,8 @@ public class CV_record extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //sharedPreference
+    /*추가한 부분*/
+    //sharedPreference에 배열이 저장 될 수 있도록 하는 함수
     private void setStringArrayPref(Context context, String key, ArrayList<String> values) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -591,5 +605,6 @@ public class CV_record extends AppCompatActivity {
         }
         return urls;
     }
+    /*끝*/
 }
 
