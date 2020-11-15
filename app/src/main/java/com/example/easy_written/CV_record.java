@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Future;
-
 import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class CV_record extends AppCompatActivity {
@@ -72,15 +71,15 @@ public class CV_record extends AppCompatActivity {
 
     //오디오
     ImageView mStartAndStopButton;
-    String mAudiopathSave = "";
+    String mAudiopathSave="";
     MediaRecorder mMediaRecorder;
-    int mStartAndStopCheck = 0;
-    int mcheckPause = 0;
+    int mStartAndStopCheck=0;
+    int mcheckPause=0;
     //private EditText mSaveFileName;
 
     //STT
     private static final String mSPEECHSUBSCRIPTIONKEY = "98ce7d7369024192aa438ba812b249c5";
-    private static final String mSERVICEREGION = "koreacentral";
+    private static final String  mSERVICEREGION= "koreacentral";
     private String mSavedText = "";
     private SpeechRecognizer mReco;
     private boolean mContinuousListeningStarted = false;
@@ -89,7 +88,7 @@ public class CV_record extends AppCompatActivity {
     //sharedpreference에 카테고리를 저장
     //카테고리가 필요 할 때 마다 mCategoryArrayList에 저장하여 사용(이하 카테고리 배열이라고 하겠음)
     private ArrayList<String> mCategoryArrayList;
-    private final String sharedPreferenceKey = "saveArrayListToSharedPreference";
+    private final String sharedPreferenceKey="saveArrayListToSharedPreference";
     /*끝*/
 
     @Override
@@ -98,17 +97,17 @@ public class CV_record extends AppCompatActivity {
         setContentView(R.layout.activity_c_v_record);
 
         int mRequestCode = 5;//STT permission request code
-        mPicturePathList = new ArrayList<>();
+        mPicturePathList=new ArrayList<>();
 
         /*추가한 부분*/
         //카테고리 배열 처음 부분에 '카테고리 선택' 추가
         //if를 사용한 것은 set을 이용해 0번째 배열에 접근을 해야 하지만, 배열에 아무것도 없을 경우 오류가 발생하기 때문에
-        mCategoryArrayList = new ArrayList<>();
-        Context mContext = getApplicationContext();
-        mCategoryArrayList = getStringArrayPref(mContext, sharedPreferenceKey);
-        if (mCategoryArrayList.size() == 0) mCategoryArrayList.add("tmp");
-        mCategoryArrayList.set(0, "기본 카테고리");
-        setStringArrayPref(mContext, sharedPreferenceKey, mCategoryArrayList);
+        mCategoryArrayList=new ArrayList<>();
+        Context mContext=getApplicationContext();
+        mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
+        if(mCategoryArrayList.size()==0) mCategoryArrayList.add("tmp");
+        mCategoryArrayList.set(0,"기본 카테고리");
+        setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
         /*끝*/
 
 
@@ -117,14 +116,14 @@ public class CV_record extends AppCompatActivity {
         mStartAndStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayAndStop mPlayAndStop = new PlayAndStop();
+                PlayAndStop mPlayAndStop=new PlayAndStop();
                 mPlayAndStop.execute();
                 onSpeechButtonClicked();
             }
         });
 
         //저장버튼
-        mPlayandSaveButton = findViewById(R.id.PlayandSaveButton);
+        mPlayandSaveButton=findViewById(R.id.PlayandSaveButton);
         mPlayandSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,16 +133,16 @@ public class CV_record extends AppCompatActivity {
 
                 /*추가한 부분*/
                 //layout의 xml파일 중 dialog_spinner에 연결하여 다이어 로그창으로 사용용
-                View mView = getLayoutInflater().inflate(R.layout.dialog_spinner, null);
-                final EditText mSaveFileName = (EditText) mView.findViewById(R.id.saveFileName);
-                final ImageView addCategory = (ImageView) mView.findViewById(R.id.addCategory);
-                final Spinner dialogSpinner = (Spinner) mView.findViewById(R.id.dialogSpinner);
+               View mView=getLayoutInflater().inflate(R.layout.dialog_spinner,null);
+                final EditText mSaveFileName=(EditText) mView.findViewById(R.id.saveFileName);
+                final ImageView addCategory=(ImageView)mView.findViewById(R.id.addCategory);
+                final Spinner dialogSpinner=(Spinner)mView.findViewById(R.id.dialogSpinner);
 
                 //카테고리 배열에 카테고리를 불러옴
                 mCategoryArrayList.clear();
-                mCategoryArrayList = getStringArrayPref(mContext, sharedPreferenceKey);
-                ArrayAdapter<String> mArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
-                        R.layout.support_simple_spinner_dropdown_item, mCategoryArrayList);
+                mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
+                ArrayAdapter<String> mArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.support_simple_spinner_dropdown_item,mCategoryArrayList);
                 mArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                 dialogSpinner.setAdapter(mArrayAdapter);
 
@@ -158,7 +157,7 @@ public class CV_record extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder mCategoryAlert = new AlertDialog.Builder(CV_record.this);
-                        EditText addCategoryEditText = new EditText(CV_record.this);
+                        EditText addCategoryEditText=new EditText(CV_record.this);
                         mCategoryAlert.setMessage("카테고리 이름");
                         mCategoryAlert.setView(addCategoryEditText);
                         mCategoryAlert.setPositiveButton("추가", new DialogInterface.OnClickListener() {
@@ -166,13 +165,13 @@ public class CV_record extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //카테고리배열에 카테고리정보를 불러옴
                                 mCategoryArrayList.clear();
-                                mCategoryArrayList = getStringArrayPref(mContext, sharedPreferenceKey);
+                                mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
                                 mCategoryArrayList.add(addCategoryEditText.getText().toString());
-                                setStringArrayPref(mContext, sharedPreferenceKey, mCategoryArrayList);
+                                setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
 
                                 //카테고리 생성시 스피너가 클릭되지 않는 버그가 있어서 강제로 스피너 refresh
-                                ArrayAdapter<String> mCategoryArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
-                                        R.layout.support_simple_spinner_dropdown_item, mCategoryArrayList);
+                                ArrayAdapter<String> mCategoryArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
+                                        R.layout.support_simple_spinner_dropdown_item,mCategoryArrayList);
                                 mCategoryArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                                 dialogSpinner.setAdapter(mCategoryArrayAdapter);
                             }
@@ -182,7 +181,7 @@ public class CV_record extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                             }
                         });
-                        AlertDialog mCategoryAlertDialog = mCategoryAlert.create();
+                        AlertDialog mCategoryAlertDialog=mCategoryAlert.create();
                         mCategoryAlertDialog.show();
                     }
                 });
@@ -191,23 +190,26 @@ public class CV_record extends AppCompatActivity {
                 mAlert.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CheckTypesTask mTypesTask = new CheckTypesTask();
-                        //이전까지 파일 이름만 async에 보냈다면, 이제는 파일이 속한 카테고리의 정보까지 합쳐서 보냄(추후에 #으로 구분)
-                        String mTmpString = mSaveFileName.getText().toString();
-                        String mTmpCategory = dialogSpinner.getSelectedItem().toString();
-                        String mPasstext = mTmpCategory + "#" + mTmpString;
-                        mTypesTask.execute(mPasstext);
+                        //카테고리가 선택이 되었으면
+
+                            CheckTypesTask mTypesTask=new CheckTypesTask();
+                            //이전까지 파일 이름만 async에 보냈다면, 이제는 파일이 속한 카테고리의 정보까지 합쳐서 보냄(추후에 #으로 구분)
+                            String mTmpString=mSaveFileName.getText().toString();
+                            String mTmpCategory=dialogSpinner.getSelectedItem().toString();
+                            String mPasstext=mTmpCategory+"#"+mTmpString;
+                            mTypesTask.execute(mPasstext);
+
                     }
                 });
 
                 mAlert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "저장을 취소 했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"저장을 취소 했습니다.",Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                AlertDialog mAlertDialog = mAlert.create();
+                AlertDialog mAlertDialog=mAlert.create();
                 mAlertDialog.show();
             }
         });
@@ -216,7 +218,7 @@ public class CV_record extends AppCompatActivity {
 
         // 사진 저장 후 미디어 스캐닝을 돌려줘야 갤러리에 반영됨.
         mMediaScanner = MediaScanner.getInstance(getApplicationContext());
-        mBtnCapture = findViewById(R.id.btnCapture);
+        mBtnCapture=findViewById(R.id.btnCapture);
         mBtnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,17 +264,16 @@ public class CV_record extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
                 int mId = menuItem.getItemId();
                 //파일 보기로 이동
-                if (mId == R.id.goToFile) {
-                    Intent mintent = new Intent(getApplicationContext(), FileView.class);
+                if(mId == R.id.goToFile){
+                    Intent mintent=new Intent(getApplicationContext(),FileView.class);
                     startActivity(mintent);
                 }
                 return true;
             }
         });
     }
-
-    public void onSpeechButtonClicked() {
-        TextView mTxt = (TextView) findViewById(R.id.RecordText);
+    public void onSpeechButtonClicked(){
+        TextView mTxt = (TextView)findViewById(R.id.RecordText);
 
         if (mContinuousListeningStarted) {
             if (mReco != null) {
@@ -293,19 +294,20 @@ public class CV_record extends AppCompatActivity {
         try {
             SpeechConfig mConfig = SpeechConfig.fromSubscription(mSPEECHSUBSCRIPTIONKEY, mSERVICEREGION);
             mConfig.setSpeechRecognitionLanguage("ko-KR");
-            assert (mConfig != null);
+            assert (mConfig!=null);
             mReco = new SpeechRecognizer(mConfig);
-            assert (mReco != null);
+            assert (mReco!=null);
             mReco.recognizing.addEventListener((s, e) -> {
-                if (e.getResult().getReason() == ResultReason.RecognizingSpeech) {
-                    mTxt.setText("" + mSavedText + e.getResult().getText());
+                if(e.getResult().getReason()==ResultReason.RecognizingSpeech){
+                    mTxt.setText("" + mSavedText+e.getResult().getText());
                 }
             });
             mReco.recognized.addEventListener((s, e) -> {
                 if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
-                    mSavedText = mSavedText + e.getResult().getText();
+                    mSavedText=mSavedText+ e.getResult().getText();
                     mTxt.setText("" + mSavedText);
-                } else if (e.getResult().getReason() == ResultReason.NoMatch) {
+                }
+                else if (e.getResult().getReason() == ResultReason.NoMatch) {
                     System.out.println("NOMATCH: Speech could not be recognized.");
                 }
             });
@@ -321,7 +323,7 @@ public class CV_record extends AppCompatActivity {
                 System.out.println("\n    Session stopped event.");
             });
             final Future<Void> mTask = mReco.startContinuousRecognitionAsync();
-            assert (mTask != null);
+            assert(mTask != null);
             mContinuousListeningStarted = true;
             CV_record.this.runOnUiThread(() -> {
                 //일시정지 버튼으로 바꿈
@@ -334,15 +336,14 @@ public class CV_record extends AppCompatActivity {
             });
             mReco.close();
         } catch (Exception ex) {
-            assert (false);
+            assert(false);
         }
     }
 
 
     //스피닝 쓰레드
-    private class CheckTypesTask extends AsyncTask<String, Void, Void> {
-        ProgressDialog mAsyncDialog = new ProgressDialog(CV_record.this);
-
+    private class CheckTypesTask extends AsyncTask<String,Void,Void> {
+        ProgressDialog mAsyncDialog=new ProgressDialog(CV_record.this);
         @Override
         protected void onPreExecute() {
             mAsyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -353,7 +354,7 @@ public class CV_record extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(getApplicationContext(), "저장완료!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"저장완료!!",Toast.LENGTH_SHORT).show();
             mAsyncDialog.dismiss();
             Intent mRestartIntent = getIntent();
             finish();
@@ -366,14 +367,14 @@ public class CV_record extends AppCompatActivity {
         protected Void doInBackground(String... ReceivedFileName) {
 
             //저장시킬 파일 만들기
-            String mReceivedFileNameToString = ReceivedFileName[0];
-            SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault());
-            Date mCurDate = new Date(System.currentTimeMillis());
-            String mFileDate = mFormatter.format(mCurDate);
-            String mRootDirectory = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN";
-            String mCreateFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/" + mReceivedFileNameToString + "#" + mFileDate;
-            File mRootFile = new File(mRootDirectory);
-            if (mRootFile.exists()) {
+            String mReceivedFileNameToString=ReceivedFileName[0];
+            SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
+            Date mCurDate   = new Date(System.currentTimeMillis());
+            String mFileDate  = mFormatter.format(mCurDate);
+            String mRootDirectory=Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN";
+            String mCreateFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ mReceivedFileNameToString+"#"+mFileDate;
+            File mRootFile=new File(mRootDirectory);
+            if(mRootFile.exists()) {
                 //저장시킬 파일
                 File mFile = new File(mCreateFilePath);
                 if (!mFile.exists())
@@ -405,21 +406,18 @@ public class CV_record extends AppCompatActivity {
                     ex.printStackTrace();
                 }
                 publishProgress();
-
-                //녹음 종료
-                if (mStartAndStopCheck == 1) {
+                if(mStartAndStopCheck==1){
                     mMediaRecorder.stop();
                     mMediaRecorder.release();
                 }
 
-            } else {
-                Toast.makeText(getApplicationContext(), "파일 생성에 실패 했습니다.", Toast.LENGTH_SHORT).show();
-                Splash splash = new Splash();
+            }else{
+                Toast.makeText(getApplicationContext(),"파일 생성에 실패 했습니다.",Toast.LENGTH_SHORT).show();
+                Splash splash=new Splash();
                 splash.CreateFile(mRootDirectory);
             }
             return null;
         }
-
         @Override
         protected void onCancelled() {
             super.onCancelled();
@@ -464,18 +462,18 @@ public class CV_record extends AppCompatActivity {
             }
 
             String mResult = "";
-            SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault());
-            Date mCurDate = new Date(System.currentTimeMillis());
-            String mPictureDate = mFormatter.format(mCurDate);
+            SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
+            Date mCurDate   = new Date(System.currentTimeMillis());
+            String mPictureDate  = mFormatter.format(mCurDate);
             String mStrFolderName = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES) + "/" + "EASYWRITTENPICTURE";
             File mFile = new File(mStrFolderName);
-            if (!mFile.exists())
+            if( !mFile.exists() )
                 mFile.mkdirs();
 
-            File mF = new File(mStrFolderName + "/" + "#" + mPictureDate + ".png");
+            File mF = new File(mStrFolderName + "/" + "#" +mPictureDate + ".png");
             mPicturePathList.add(mF.getPath());
 
-            FileOutputStream mFOut = null;
+            FileOutputStream mFOut=null;
             try {
                 mFOut = new FileOutputStream(mF);
             } catch (FileNotFoundException e) {
@@ -484,7 +482,7 @@ public class CV_record extends AppCompatActivity {
             }
 
             // 비트맵 사진 폴더 경로에 저장
-            rotate(mBitmap, mExifDegree).compress(Bitmap.CompressFormat.PNG, 70, mFOut);
+            rotate(mBitmap,mExifDegree).compress(Bitmap.CompressFormat.PNG, 70, mFOut);
 
             try {
                 mFOut.flush();
@@ -522,52 +520,54 @@ public class CV_record extends AppCompatActivity {
 
     //녹음
     private void setupMediaRecorder() {
-        mMediaRecorder = new MediaRecorder();
+        mMediaRecorder=new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mMediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mMediaRecorder.setOutputFile(mAudiopathSave);
     }
 
-    public class PlayAndStop extends AsyncTask<Void, Void, Void> {
+    public class PlayAndStop extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             //시작
             if (mStartAndStopCheck == 0 && mcheckPause == 0) {
-                mAudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "_audio_record" + ".3gp";
-                setupMediaRecorder();
-                try {
-                    mMediaRecorder.prepare();
-                    mMediaRecorder.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
-                mStartAndStopCheck = 1;
+                    mAudiopathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+ "_audio_record"+".3gp";
+                    setupMediaRecorder();
+                    try {
+                        mMediaRecorder.prepare();
+                        mMediaRecorder.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IllegalStateException e){
+                        e.printStackTrace();
+                    }
+                mStartAndStopCheck=1;
             }
             //일시중지
-            else if (mStartAndStopCheck == 1 && mcheckPause == 0) {
+            else if(mStartAndStopCheck==1 && mcheckPause == 0){
                 try {
                     mMediaRecorder.pause();
-                    mcheckPause = 1;
-                } catch (IllegalStateException e) {
+                    mcheckPause=1;
+                }
+                catch (IllegalStateException e){
                     e.printStackTrace();
                 }
             }
             //재시작
-            else if (mStartAndStopCheck == 1 && mcheckPause == 1) {
+            else if(mStartAndStopCheck==1 && mcheckPause == 1){
                 mMediaRecorder.resume();
-                mStartAndStopCheck = 1;
+                mStartAndStopCheck=1;
             }
             return null;
         }
     }
 
     public void RenameFile(String filename, String newFilename) {
-        File mFile = new File(filename);
-        File mFileNew = new File(newFilename);
-        if (mFile.exists()) mFile.renameTo(mFileNew);
+        File mFile = new File( filename );
+        File mFileNew = new File( newFilename );
+        if( mFile.exists() ) mFile.renameTo( mFileNew );
     }
 
     //메뉴 탭에서 항목 선택시 동작

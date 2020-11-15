@@ -121,8 +121,8 @@ public class FileView extends AppCompatActivity  {
 
                         //카테고리 생성시 스피너가 클릭되지 않는 버그가 있어서 강제로 스피너 refresh
                         ArrayAdapter<String> mCategoryArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
-                                R.layout.support_simple_spinner_dropdown_item,mCategotyList);
-                        mCategoryArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                                R.layout.color_spinner,mCategotyList);
+                        mCategoryArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
                         mCategorySpinner.setAdapter(mCategoryArrayAdapter);
                     }
                 });
@@ -167,8 +167,8 @@ public class FileView extends AppCompatActivity  {
                         //해당 삭제 정보를 sharedpreference에 저장
                         setStringArrayPref(mContext,sharedPreferenceKey,mGetCategory);
                         ArrayAdapter<String> mCategoryArrayAdapter=new ArrayAdapter<String>(getApplicationContext(),
-                                R.layout.support_simple_spinner_dropdown_item,mGetCategory);
-                        mCategoryArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                                R.layout.color_spinner,mGetCategory);
+                        mCategoryArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
                         mCategorySpinner.setAdapter(mCategoryArrayAdapter);
 
                     }
