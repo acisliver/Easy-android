@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:screenOrientation="portrait">
-
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:id="@+id/Scroll"
-        >
-        <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_weight="5">
+
+        <LinearLayout
+
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="400dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viepager2"
+                android:layout_width="400dp"
+                android:layout_height="200dp"
+                ></androidx.viewpager2.widget.ViewPager2>
 
             <ImageView
-                android:id="@+id/expanded_image"
+                android:adjustViewBounds="true"
+                android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:visibility="invisible" />
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_launcher_foreground" />
 
-            <GridLayout
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_below="@+id/expanded_image"
-                android:background="#151515"
-                android:columnCount="4"
-                android:orientation="horizontal">
-
-            </GridLayout>
-        </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
-    <LinearLayout
+
+    <TextView
+        android:layout_weight="4"
+        android:id="@+id/textView3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/text_view"
-            android:bufferType="spannable"
-            android:textSize="20dp"
-            android:layout_height="270dp"
-            android:layout_width="match_parent"
-            android:scrollbars="vertical"
-            />
+        android:layout_height="500dp"
+        android:scrollbars="vertical"
+        android:text="aaaaa" />
+
+
         <LinearLayout
+            android:layout_weight="0.01"
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -65,8 +65,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.6"/>
-
-        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
