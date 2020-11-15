@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+<<<<<<< Updated upstream
 import android.graphics.PorterDuff;
 import android.media.Image;
+=======
+>>>>>>> Stashed changes
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -24,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
@@ -245,11 +250,6 @@ public class FileView extends AppCompatActivity  {
                     //공유
                     case R.id.share_tab: {
                         Toast.makeText(getApplicationContext(), "공유", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                    //새폴더
-                    case R.id.folder_tab: {
-                        Toast.makeText(getApplicationContext(), "새폴더", Toast.LENGTH_SHORT).show();
                         return true;
                     }
                     //하단 바 내리기
