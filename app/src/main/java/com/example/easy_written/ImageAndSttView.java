@@ -59,6 +59,9 @@ public class ImageAndSttView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //build vierson plugin 4.0.0
+        //grable vierson 6.1.1
+        //gradle/wrapper distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_and_stt_view);
