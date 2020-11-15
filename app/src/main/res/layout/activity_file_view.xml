@@ -37,10 +37,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
             android:orientation="horizontal">
-            <androidx.appcompat.widget.AppCompatSpinner
+            <Spinner
                 android:id="@+id/categorySpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:popupBackground="@color/cardview_dark_background"
+                />
             <ImageView
                 android:id="@+id/addCategoryOfFileView"
                 android:src="@drawable/ic_baseline_add_24"

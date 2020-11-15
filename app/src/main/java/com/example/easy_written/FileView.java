@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,6 +61,7 @@ public class FileView extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
+
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_list);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -77,15 +80,15 @@ public class FileView extends AppCompatActivity  {
         Context mContext=getApplicationContext();
         mCategotyList=getStringArrayPref(mContext,sharedPreferenceKey);
         ArrayAdapter<String> mSpinnerAdapter=new ArrayAdapter<String>(getApplicationContext(),
-                R.layout.support_simple_spinner_dropdown_item,mCategotyList);
-        mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                R.layout.color_spinner,mCategotyList);
+        mSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
         mCategorySpinner.setAdapter(mSpinnerAdapter);
 
         //카테고리를 선택 했을 경우 해당 카테고리에 속한 파일들만 보일 수 있도록 함
         mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("카테고리 선택")) {
+                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("기본 카테고리")) {
                     fileter(mCategorySpinner.getItemAtPosition(position).toString());
                 }else{
                     fileter("");
