@@ -15,10 +15,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,7 +31,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
@@ -132,12 +129,15 @@ public class CV_record extends AppCompatActivity {
                 AlertDialog.Builder mAlert = new AlertDialog.Builder(CV_record.this);
                 mAlert.setMessage("파일이름");
 
+
                 /*추가한 부분*/
                 //layout의 xml파일 중 dialog_spinner에 연결하여 다이어 로그창으로 사용용
                 View mView = getLayoutInflater().inflate(R.layout.dialog_spinner, null);
                 final EditText mSaveFileName = (EditText) mView.findViewById(R.id.saveFileName);
                 final ImageView addCategory = (ImageView) mView.findViewById(R.id.addCategory);
                 final Spinner dialogSpinner = (Spinner) mView.findViewById(R.id.dialogSpinner);
+
+
 
                 //카테고리 배열에 카테고리를 불러옴
                 mCategoryArrayList.clear();
@@ -208,6 +208,7 @@ public class CV_record extends AppCompatActivity {
                 });
 
                 AlertDialog mAlertDialog = mAlert.create();
+
                 mAlertDialog.show();
             }
         });

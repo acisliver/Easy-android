@@ -64,13 +64,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         }
         else {
             viewholder.mCheckBox.setChecked(false);
-            setItemBackground(viewholder, "#ffffff");
+            setItemBackground(viewholder, "#575454");
         }
 
         //하단바 표시 flag에 따라 checkBox 표시
         if (mModifyFlag==0) {
             viewholder.mCheckBox.setVisibility(View.GONE);
-            setItemBackground(viewholder, "#ffffff");
+            setItemBackground(viewholder, "#575454");
         }
         else {
             viewholder.mCheckBox.setVisibility(View.VISIBLE);
