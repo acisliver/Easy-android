@@ -281,23 +281,25 @@ public class FileView extends AppCompatActivity  {
         File directory = new File(path);
 
         mFiles = directory.listFiles();
+        Log.d("mFiles",mFiles.toString());
+        if(directory.exists()) {
+            for (int i = 0; i < mFiles.length; i++) {
+                String name = mFiles[i].getName();
+                String[] result = name.split("#");
+                filesCategoryList.add(result[0]);
+                filesNameList.add(result[1]);
+                filesDateList.add(result[2]);
+                String tmp = result[2];
+                String mDate = tmp.substring(0, 11);
+                String mHour = tmp.substring(11, 13);
+                String mMinute = tmp.substring(13, 15);
+                String mSecond = tmp.substring(15, 17);
+                mVariable.add(new File_Data("카테고리:" + filesCategoryList.get(i),
+                        "파일이름 : " + "[" + filesCategoryList.get(i) + "]" + filesNameList.get(i),
+                        "날짜:" + mDate + mHour + "시" + mMinute + "분" + mSecond + "초"));
+                mArrayList.add(mVariable.get(i));
 
-        for (int i = 0; i < mFiles.length; i++) {
-            String name = mFiles[i].getName();
-            String[] result = name.split("#");
-            filesCategoryList.add(result[0]);
-            filesNameList.add(result[1]);
-            filesDateList.add(result[2]);
-            String tmp=result[2];
-            String mDate=tmp.substring(0,11);
-            String mHour=tmp.substring(11,13);
-            String mMinute=tmp.substring(13,15);
-            String mSecond=tmp.substring(15,17);
-            mVariable.add(new File_Data("카테고리:"+filesCategoryList.get(i),
-                    "파일이름 : " + "["+filesCategoryList.get(i)+"]"+filesNameList.get(i),
-                    "날짜:" + mDate+mHour+"시"+mMinute+"분"+mSecond+"초"));
-            mArrayList.add(mVariable.get(i));
-
+            }
         }
     }
 
@@ -445,4 +447,5 @@ public class FileView extends AppCompatActivity  {
         return urls;
     }
     /*끝*/
+
 }

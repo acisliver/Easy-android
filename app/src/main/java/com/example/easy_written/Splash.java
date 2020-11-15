@@ -27,9 +27,7 @@ public class Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        //최상위 파일 생성
-        String mCreateTopFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "EASYWRITTEN";
-        CreateFile(mCreateTopFilePath);
+
 
         mStartTimeMillis = System.currentTimeMillis();
 
@@ -43,9 +41,10 @@ public class Splash extends AppCompatActivity {
             StartNextActivity();
         }
 
+
     }
 
-    private void CreateFile(String FilePath){
+    public void CreateFile(String FilePath){
         File mTopFile=new File(FilePath);
         if(!mTopFile.exists()){
             boolean mkdirs=mTopFile.mkdirs();
@@ -193,6 +192,9 @@ public class Splash extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                //최상위 파일 생성
+                String mCreateTopFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN"+"/";
+                CreateFile(mCreateTopFilePath);
                 startActivity(new Intent(Splash.this, GetNextActivityClass()));
                 finish();
             }

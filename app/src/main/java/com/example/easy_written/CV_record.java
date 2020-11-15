@@ -367,51 +367,56 @@ public class CV_record extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... ReceivedFileName) {
 
-
             //저장시킬 파일 만들기
             String mReceivedFileNameToString=ReceivedFileName[0];
             SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss", Locale.getDefault() );
             Date mCurDate   = new Date(System.currentTimeMillis());
             String mFileDate  = mFormatter.format(mCurDate);
+            String mRootDirectory=Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN";
             String mCreateFilePath= Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +"EASYWRITTEN"+ "/"+ mReceivedFileNameToString+"#"+mFileDate;
-            File mFile=new File(mCreateFilePath);
-            if(!mFile.exists())
-                mFile.mkdirs();
+            File mRootFile=new File(mRootDirectory);
+            if(mRootFile.exists()) {
+                //저장시킬 파일
+                File mFile = new File(mCreateFilePath);
+                if (!mFile.exists())
+                    mFile.mkdirs();
 
-            //저장시킬 파일로 오디오 경로 변경
-            String mNewpathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+mReceivedFileNameToString+"#"+mFileDate+ "/"+"_audio_record"+".3gp";
-            RenameFile(mAudiopathSave,mNewpathSave);
+                //저장시킬 파일로 오디오 경로 변경
+                String mNewpathSave = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/" + mReceivedFileNameToString + "#" + mFileDate + "/" + "_audio_record" + ".3gp";
+                RenameFile(mAudiopathSave, mNewpathSave);
 
-            //사진 경로 변경
-            for(int k=0;k<mPicturePathList.size();k++){
-                String[] mStringSplit=(mPicturePathList.get(k)).split("#");
-                String mMovepath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+"EASYWRITTEN"+ "/"+mReceivedFileNameToString+"#"+mFileDate+"/"+"#"+mStringSplit[1];
-                RenameFile(mPicturePathList.get(k),mMovepath);
+                //사진 경로 변경
+                for (int k = 0; k < mPicturePathList.size(); k++) {
+                    String[] mStringSplit = (mPicturePathList.get(k)).split("#");
+                    String mMovepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/" + mReceivedFileNameToString + "#" + mFileDate + "/" + "#" + mStringSplit[1];
+                    RenameFile(mPicturePathList.get(k), mMovepath);
+                }
+
+                //STT텍스트 저장
+                FileOutputStream mFos = null;
+                try {
+                    mFos = new FileOutputStream(mCreateFilePath + "/" + "STTtext.txt", true);
+                    BufferedWriter mWriter = new BufferedWriter(new OutputStreamWriter(mFos));
+                    mWriter.write(mSavedText);
+                    mWriter.flush();
+                    mWriter.close();
+                    mFos.close();
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                publishProgress();
+
+                //녹음 종료
+                mMediaRecorder.stop();
+                mMediaRecorder.release();
+            }else{
+                Toast.makeText(getApplicationContext(),"파일 생성에 실패 했습니다.",Toast.LENGTH_SHORT).show();
+                Splash splash=new Splash();
+                splash.CreateFile(mRootDirectory);
             }
-
-            //STT텍스트 저장
-            FileOutputStream mFos = null;
-            try {
-                mFos = new FileOutputStream(mCreateFilePath+"/"+"STTtext.txt", true);
-                BufferedWriter mWriter = new BufferedWriter(new OutputStreamWriter(mFos));
-                mWriter.write(mSavedText);
-                mWriter.flush();
-                mWriter.close();
-                mFos.close();
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            publishProgress();
-
-            //녹음 종료
-            mMediaRecorder.stop();
-            mMediaRecorder.release();
-
             return null;
-
-
         }
         @Override
         protected void onCancelled() {
