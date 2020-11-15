@@ -5,11 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-<<<<<<< Updated upstream
-import android.graphics.PorterDuff;
-import android.media.Image;
-=======
->>>>>>> Stashed changes
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -32,7 +27,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
