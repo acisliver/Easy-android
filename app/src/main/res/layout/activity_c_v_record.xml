@@ -3,6 +3,7 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
+    android:background="@color/cardview_dark_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
@@ -19,6 +20,7 @@
             <TextView
                 android:id="@+id/toolbar_title"
                 android:text="녹음"
+                android:textColor="@color/colorWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
@@ -37,7 +39,7 @@
             android:screenOrientation="portrait">
 
             <TextView
-                android:background="@drawable/custom_textviw"
+                android:background="@drawable/custom_textview"
                 android:id="@+id/RecordText"
                 android:textSize="20dp"
                 android:layout_width="300dp"
