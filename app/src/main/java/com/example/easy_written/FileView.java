@@ -88,9 +88,9 @@ public class FileView extends AppCompatActivity  {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("기본 카테고리")) {
-                    fileter(mCategorySpinner.getItemAtPosition(position).toString());
+                    fileterCategoty(mCategorySpinner.getItemAtPosition(position).toString());
                 }else{
-                    fileter("");
+                    fileterCategoty("");
                 }
 
             }
@@ -300,10 +300,20 @@ public class FileView extends AppCompatActivity  {
         }
     }
 
-    private void fileter(String text){
+    private void fileterCategoty(String text){
         ArrayList<File_Data> mFilteredList=new ArrayList<>();
         for(File_Data item:mVariable){
             if(item.getmCategory().toLowerCase().contains(text)){
+                mFilteredList.add(item);
+            }
+        }
+        mAdapter.filterList(mFilteredList);
+    }
+
+    private void fileterFile(String text){
+        ArrayList<File_Data> mFilteredList=new ArrayList<>();
+        for(File_Data item:mVariable){
+            if(item.getName().toLowerCase().contains(text)){
                 mFilteredList.add(item);
             }
         }
@@ -329,6 +339,23 @@ public class FileView extends AppCompatActivity  {
         MenuItem item=menu.findItem(R.id.search_file_icon);
         SearchView searchView= (SearchView) item.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setQueryHint("파일 검색");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!newText.equals("")) {
+                    fileterFile(newText);
+                }else{
+                    fileterFile("");
+                }
+                return false;
+            }
+        });
 
         return super.onCreateOptionsMenu(menu);
     }
