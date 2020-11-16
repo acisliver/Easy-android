@@ -21,8 +21,10 @@
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viepager2"
-                android:layout_width="400dp"
-                android:layout_height="200dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="80dp"
+                android:paddingEnd="80dp"
                 ></androidx.viewpager2.widget.ViewPager2>
 
             <ImageView

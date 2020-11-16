@@ -1,10 +1,4 @@
 package com.example.easy_written;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.CompositePageTransformer;
-import androidx.viewpager2.widget.MarginPageTransformer;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -13,22 +7,31 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
@@ -78,26 +81,46 @@ public class ImageAndSttView extends AppCompatActivity {
             }
         });
 
+        scrollview.setVisibility(View.GONE);
+
+
         Intent mintent=getIntent();
         String paths=mintent.getStringExtra("paths");
 
         Highlighting mHighlighting=new Highlighting();
-        textView.setText(mHighlighting.ReadTextFile(paths+"/"+"STTtext.txt"));
+        String content = mHighlighting.ReadTextFile(paths+"/"+"STTtext.txt");
+        textView.setText(content);
 
         if (! Python.isStarted())
             Python.start(new AndroidPlatform(this));
         Python py=Python.getInstance();
         PyObject pyf=py.getModule("myscript");
         PyObject obj=pyf.callAttr("test",textView.getText().toString());
-        System.out.println(obj.toString());
-
+        if(!obj.toString().equals("null")){
+            SpannableString spannableString = new SpannableString(content);
+            for(int i=0;i<obj.asList().size();i++){
+                int start=-1;
+                while(true){
+                    if(content.indexOf(obj.asList().get(i).toString(),start+1)==-1){
+                        break;
+                    }
+                    start= content.indexOf(obj.asList().get(i).toString(),start+1);
+                    int end = start + obj.asList().get(i).toString().length();
+                    spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#FF6702")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    textView.setText(spannableString);
+                }
+            }
+        }
 
         slideItemList=new ArrayList<>();
         SliderAdaper sliderAdaper=new SliderAdaper(slideItemList,viewPager2);
 
-
         //경로 하위 폴터에서 이미지 파일 찾기
         findPNGFile(paths);
+        if(!slideItemList.isEmpty()){
+            System.out.println(slideItemList);
+            scrollview.setVisibility(View.VISIBLE);
+        }
         viewPager2.setAdapter(sliderAdaper);
 
         viewPager2.setClipToPadding(false);

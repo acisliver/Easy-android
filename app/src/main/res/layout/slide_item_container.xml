@@ -5,6 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/imageSlide"
     app:riv_corner_radius="20dp"
+    android:maxHeight="200dp"
+    android:scaleType="centerInside"
+    android:adjustViewBounds="true"
     >
 
 </com.makeramen.roundedimageview.RoundedImageView>
