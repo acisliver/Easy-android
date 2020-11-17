@@ -237,8 +237,23 @@ public class FileView extends AppCompatActivity  {
                 switch (menuItem.getItemId()) {
                     //삭제
                     case R.id.delete_tab: {
-                        Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_SHORT).show();
-                        
+                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/";
+                        for (int pos=0;pos<mFiles.length-1;pos++){
+                            if(mVariable.get(pos).getChecked()==1) {
+                                String name=mVariable.get(pos).getName();
+                                String[] extractionName = name.split(":");
+                                //String[] extractionCategoty=extractionName[1].split("-");
+                                if(extractionName[0]!=null)
+                                    Log.d("deletefile",extractionName[0]);
+                                else
+                                    Log.d("deletefile","null");
+                                //fileDelete(path+mVariable.get(pos).getName());
+                            }
+                        }
+                        mModifyFlag = 0;
+                        handleVisible(mModifyFlag);
+                        mAdapter.notifyDataSetChanged();
+                        //Toast.makeText(getApplicationContext(), "삭제 완료", Toast.LENGTH_SHORT).show();
                         return true;
                     }
                     //공유
@@ -292,7 +307,7 @@ public class FileView extends AppCompatActivity  {
                 String mMinute = tmp.substring(13, 15);
                 String mSecond = tmp.substring(15, 17);
                 mVariable.add(new File_Data("카테고리:" + filesCategoryList.get(i),
-                        "파일이름 : " + "[" + filesCategoryList.get(i) + "]" + filesNameList.get(i),
+                        "파일이름 : "  + filesCategoryList.get(i) + "-" + filesNameList.get(i),
                         "날짜:" + mDate + mHour + "시" + mMinute + "분" + mSecond + "초"));
                 mArrayList.add(mVariable.get(i));
 
@@ -472,4 +487,16 @@ public class FileView extends AppCompatActivity  {
     }
     /*끝*/
 
+    private boolean fileDelete(String path){
+        try{
+            File file=new File(path);
+            if(file.exists()){
+                file.delete();
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
