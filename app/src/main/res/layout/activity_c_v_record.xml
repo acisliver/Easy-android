@@ -43,9 +43,10 @@
                 android:id="@+id/RecordText"
                 android:textSize="20dp"
                 android:layout_width="300dp"
-            android:layout_height="450dp"
-            android:layout_marginBottom="20dp"
-            android:padding="5dp"/>
+                android:layout_height="450dp"
+                android:layout_marginBottom="20dp"
+                android:padding="5dp"
+                android:textColor="#FFFFFF"/>
 
 
 

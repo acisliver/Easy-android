@@ -107,7 +107,6 @@ public class CV_record extends AppCompatActivity {
         setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
         /*끝*/
 
-
         //오디오
         mStartAndStopButton = findViewById(R.id.StartAndStopButton);
         mStartAndStopButton.setOnClickListener(new View.OnClickListener() {

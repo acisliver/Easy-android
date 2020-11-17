@@ -60,6 +60,7 @@ public class ImageAndSttView extends AppCompatActivity {
     private TextView mTextView;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //build vierson plugin 4.0.0
@@ -313,6 +314,14 @@ public class ImageAndSttView extends AppCompatActivity {
             }
         });
     }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mMediaPlayer.stop();
+    }
+
     private void findPNGFile(String strDirPath) {
         File mPath = new File(strDirPath);
         File[] mFList = mPath.listFiles();
