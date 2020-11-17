@@ -58,6 +58,7 @@ public class ImageAndSttView extends AppCompatActivity {
     private SeekBar mAudioSeekBar;
     public boolean mPlayAndCancelCheck =true, mIsPause=false;
     private TextView mTextView;
+    private int starting=0;
 
 
 
@@ -359,7 +360,7 @@ public class ImageAndSttView extends AppCompatActivity {
     }
 
     private void PlayAndCancel(String path){
-        if(mPlayAndCancelCheck ==true) {
+        if(starting==0){
             mMediaPlayer = new MediaPlayer();
             try {
                 mMediaPlayer.setDataSource(path);
@@ -372,6 +373,10 @@ public class ImageAndSttView extends AppCompatActivity {
             }catch (IllegalStateException e){
                 e.printStackTrace();
             }
+            starting=1;
+        }
+        if(mPlayAndCancelCheck ==true && starting==1) {
+
             mAudioDuration = mMediaPlayer.getDuration();
             mAudioSeekBar.setMax(mAudioDuration);
             mAudioSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -401,7 +406,7 @@ public class ImageAndSttView extends AppCompatActivity {
             }).start();
             mPlayAndCancelCheck =false;
         }
-        else if(mPlayAndCancelCheck ==false){
+        else if(mPlayAndCancelCheck ==false && starting==1){
             Log.e("녹음파일 재생 중지","중지");
             if (mMediaPlayer != null) {
                 mIsPause =true;

@@ -103,7 +103,7 @@ public class CV_record extends AppCompatActivity {
         Context mContext=getApplicationContext();
         mCategoryArrayList=getStringArrayPref(mContext,sharedPreferenceKey);
         if(mCategoryArrayList.size()==0) mCategoryArrayList.add("tmp");
-        mCategoryArrayList.set(0,"기본 카테고리");
+        mCategoryArrayList.set(0,"기본카테고리");
         setStringArrayPref(mContext,sharedPreferenceKey,mCategoryArrayList);
         /*끝*/
 

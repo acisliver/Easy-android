@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
@@ -50,6 +52,8 @@ public class FileView extends AppCompatActivity  {
     private File[] mFiles;
     private int mModifyFlag;
     private int mChecked;
+
+    private RecyclerView mRecyclerView;
     /*추가*/
     //sharedpreference에 저장된 카테고리를 불러오기 위한 키값 과 카테고리 배열
     private final String sharedPreferenceKey="saveArrayListToSharedPreference";
@@ -61,7 +65,7 @@ public class FileView extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_list);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_list);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -87,7 +91,7 @@ public class FileView extends AppCompatActivity  {
         mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("기본 카테고리")) {
+                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("기본카테고리")) {
                     fileterCategoty(mCategorySpinner.getItemAtPosition(position).toString());
                 }else{
                     fileterCategoty("");
@@ -238,22 +242,34 @@ public class FileView extends AppCompatActivity  {
                     //삭제
                     case R.id.delete_tab: {
                         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "EASYWRITTEN" + "/";
-                        for (int pos=0;pos<mFiles.length-1;pos++){
+                        int size=mFiles.length;
+                        for (int pos=0;pos<size;pos++){
                             if(mVariable.get(pos).getChecked()==1) {
+                                //저장된 값에서 경로 구하기
                                 String name=mVariable.get(pos).getName();
                                 String[] extractionName = name.split(":");
-                                //String[] extractionCategoty=extractionName[1].split("-");
-                                if(extractionName[0]!=null)
-                                    Log.d("deletefile",extractionName[0]);
-                                else
-                                    Log.d("deletefile","null");
-                                //fileDelete(path+mVariable.get(pos).getName());
+                                String[] extractionCategoty=extractionName[1].split("-");
+                                String[] space=extractionCategoty[0].split(" ");
+                                String[] date=mVariable.get(pos).getDate().split(":");
+                                String[] hour=date[1].split("시");
+                                String[] minute=hour[1].split("분");
+                                String[] second=minute[1].split("초");
+                                String realPath=path+space[1]+"#"+extractionCategoty[1]+"#"+hour[0]+minute[0]+second[0];
+
+                                //하위파일까지 삭제하는 메서드
+                                setDirEmpty(realPath);
                             }
                         }
+
                         mModifyFlag = 0;
                         handleVisible(mModifyFlag);
                         mAdapter.notifyDataSetChanged();
-                        //Toast.makeText(getApplicationContext(), "삭제 완료", Toast.LENGTH_SHORT).show();
+
+                        //notifycation이 안먹혀서 임시방편으로 화면 초기화
+                        Intent mRestartIntent = getIntent();
+                        finish();
+                        startActivity(mRestartIntent);
+
                         return true;
                     }
                     //공유
@@ -487,16 +503,20 @@ public class FileView extends AppCompatActivity  {
     }
     /*끝*/
 
-    private boolean fileDelete(String path){
-        try{
-            File file=new File(path);
-            if(file.exists()){
-                file.delete();
-                return true;
+     public void setDirEmpty(String dirName){
+        String path =  dirName;
+        File dir = new File(path);
+        File[] childFileList = dir.listFiles();
+        if (dir.exists()) {
+            for (File childFile : childFileList) {
+                if (childFile.isDirectory()) {
+                    setDirEmpty(childFile.getAbsolutePath());
+                    }
+                else{
+                    childFile.delete();
+                }
             }
-        }catch (Exception e){
-            e.printStackTrace();
+            dir.delete();
         }
-        return false;
     }
 }
