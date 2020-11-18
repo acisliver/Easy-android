@@ -91,7 +91,7 @@ public class FileView extends AppCompatActivity  {
         mCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("기본카테고리")) {
+                if(!mCategorySpinner.getSelectedItem().toString().equalsIgnoreCase("기본 카테고리")) {
                     fileterCategoty(mCategorySpinner.getItemAtPosition(position).toString());
                 }else{
                     fileterCategoty("");
@@ -245,19 +245,8 @@ public class FileView extends AppCompatActivity  {
                         int size=mFiles.length;
                         for (int pos=0;pos<size;pos++){
                             if(mVariable.get(pos).getChecked()==1) {
-                                //저장된 값에서 경로 구하기
-                                String name=mVariable.get(pos).getName();
-                                String[] extractionName = name.split(":");
-                                String[] extractionCategoty=extractionName[1].split("-");
-                                String[] space=extractionCategoty[0].split(" ");
-                                String[] date=mVariable.get(pos).getDate().split(":");
-                                String[] hour=date[1].split("시");
-                                String[] minute=hour[1].split("분");
-                                String[] second=minute[1].split("초");
-                                String realPath=path+space[1]+"#"+extractionCategoty[1]+"#"+hour[0]+minute[0]+second[0];
-
                                 //하위파일까지 삭제하는 메서드
-                                setDirEmpty(realPath);
+                                setDirEmpty(mFiles[pos].getPath());
                             }
                         }
 
@@ -323,7 +312,7 @@ public class FileView extends AppCompatActivity  {
                 String mMinute = tmp.substring(13, 15);
                 String mSecond = tmp.substring(15, 17);
                 mVariable.add(new File_Data("카테고리:" + filesCategoryList.get(i),
-                        "파일이름 : "  + filesCategoryList.get(i) + "-" + filesNameList.get(i),
+                        "파일이름 : "  + "[" +filesCategoryList.get(i) + "]" + filesNameList.get(i),
                         "날짜:" + mDate + mHour + "시" + mMinute + "분" + mSecond + "초"));
                 mArrayList.add(mVariable.get(i));
 
