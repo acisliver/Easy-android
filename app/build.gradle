@@ -42,7 +42,7 @@ android {
             }
         }
         python{
-            buildPython "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
+            buildPython "C:\\Users\\rhwlg\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
         }
     }
     compileOptions {
