@@ -50,8 +50,6 @@ public class ImageAndSttView extends AppCompatActivity {
     private ScrollView scrollview;
     private Animator mCurrentAnimator;
     private int mShortAnimationDuration;
-    private ArrayList<String> mImagePtahArrayList;
-    private ArrayList<ImageView> mImageViewArrayList;
     private MediaPlayer mMediaPlayer;
     private int mAudioDuration;
     private List<SlideItem> slideItemList;
@@ -320,7 +318,9 @@ public class ImageAndSttView extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mMediaPlayer.stop();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+        }
     }
 
     private void findPNGFile(String strDirPath) {
@@ -350,15 +350,6 @@ public class ImageAndSttView extends AppCompatActivity {
 
 
     //image클릭시
-    View.OnClickListener getOnClickDoSomething(int k)  {
-        return new View.OnClickListener() {
-            public void onClick(View v) {
-                zoomImageFromThumb(mImageViewArrayList.get(k),mImagePtahArrayList.get(k));
-                scrollview.smoothScrollTo(0,0);
-            }
-        };
-    }
-
     private void PlayAndCancel(String path){
         if(starting==0){
             mMediaPlayer = new MediaPlayer();
