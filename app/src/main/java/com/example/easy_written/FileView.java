@@ -160,12 +160,16 @@ public class FileView extends AppCompatActivity  {
                         mGetCategory=getStringArrayPref(mContext,sharedPreferenceKey);
                         for(int i=0;i<mGetCategory.size();i++){
                             if(mDeleteCategoty.equals(mGetCategory.get(i))){
+                                if((mGetCategory.get(i)).equals("기본 카테고리")){
+                                    Toast.makeText(getApplicationContext(),"기본 카테고리는 삭제 할 수 없습니다.",Toast.LENGTH_SHORT).show();
+                                    break;
+                                }
                                 mGetCategory.remove(i);
-                                Toast.makeText(getApplicationContext(),"삭제 성공",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),"카테고리 삭제 성공!!",Toast.LENGTH_SHORT).show();
                                 break;
                             }
                             if(i==(mGetCategory.size()-1)) {
-                                Toast.makeText(getApplicationContext(), "삭제 실패", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "카테고리가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
                             }
                         }
                         //해당 삭제 정보를 sharedpreference에 저장
