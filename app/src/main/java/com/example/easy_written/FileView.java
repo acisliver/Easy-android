@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -39,7 +38,6 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class FileView extends AppCompatActivity  {
     private ArrayList<File_Data> mArrayList;
@@ -261,11 +259,7 @@ public class FileView extends AppCompatActivity  {
 
                         return true;
                     }
-                    //공유
-                    case R.id.share_tab: {
-                        Toast.makeText(getApplicationContext(), "공유", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
+
                     //하단 바 내리기
                     case R.id.close_tab: {
                         mModifyFlag = 0;
